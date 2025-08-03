@@ -33,7 +33,8 @@ public class ShapeMovement : MonoBehaviour
 
     private Rigidbody2D rb;
 
-    private Vector2 currentInputs;
+    public Vector2 currentInputs;
+    public Vector2 lastInputs;
     private bool isGrounded;
     private bool canDash = true;
 
@@ -50,6 +51,7 @@ public class ShapeMovement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animator = shapeSprite.GetComponent<Animator>();
         currentStamina = maxStamina;
+        lastInputs.x = 1;
     }
 
     void Update()
@@ -62,7 +64,10 @@ public class ShapeMovement : MonoBehaviour
     {
         MovePlayer();
         ChangeAnimationBools();
-        
+        if(currentInputs.x != 0)
+        {
+            lastInputs = currentInputs;
+        }
     }
 
     void ChangeAnimationBools()
@@ -112,7 +117,7 @@ public class ShapeMovement : MonoBehaviour
             canDash = false;
             Vector2 dashDirection = new Vector2(currentInputs.x, 0).normalized;
             if (dashDirection == Vector2.zero)
-                dashDirection = Vector2.right; // Dash right by default if player isn't moving - we could change this behavior
+                dashDirection = new Vector2(lastInputs.x, 0).normalized; ; // Dash right by default if player isn't moving - we could change this behavior
 
             rb.linearVelocity = new Vector2(rb.linearVelocityX + (dashDirection.x * dashForce), rb.linearVelocityY);
 
