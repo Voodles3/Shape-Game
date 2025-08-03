@@ -139,7 +139,7 @@ public class ShapeMovement : MonoBehaviour
     public void SubtractStamina(float val)
     {
         currentStamina -= val;
-        staminaRegenTimer = 0f; // Reset regen delay
+        staminaRegenTimer = 0f; 
         currentStamina = Mathf.Max(currentStamina, 0f);
         UpdateStaminaBar();
     }
