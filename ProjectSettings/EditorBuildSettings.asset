@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: 0078e9c012ab46d4fbb757b0028a7cae
   - enabled: 1
+    path: Assets/Scenes/ChooseShape.unity
+    guid: 6a9efce94764f75448a3016d329922b8
+  - enabled: 1
     path: Assets/Scenes/Game.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   m_configObjects:
