@@ -30,7 +30,7 @@ public abstract class ShapeAttack : MonoBehaviour
         if (canAttack && movement.currentStamina >= movement.attackCost)
         {
             canAttack = false;
-            isAttacking = false;
+            isAttacking = true;
             animator.SetBool("attack", true);
             Vector2 attackDirection = new Vector2(movement.currentInputs.x, 0).normalized;
             if (movement.currentInputs.x == 0)
