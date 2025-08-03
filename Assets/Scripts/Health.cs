@@ -13,7 +13,7 @@ public class Health : MonoBehaviour
                                //WHAT THE FUCK ARE UNITY EVENTS
 
 
-    public Slider healthSlider;
+    public Slider healthBar;
 
     public float MaxHealth => maxHealth;
     public float CurrentHealth => currentHealth;
@@ -37,7 +37,7 @@ public class Health : MonoBehaviour
 
     public void UpdateHealthBar()
     {
-        healthSlider.value = currentHealth/maxHealth;
+        healthBar.value = currentHealth/maxHealth;
     }
     public void TakeDamage(int amount)
     {

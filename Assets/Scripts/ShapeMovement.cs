@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class ShapeMovement : MonoBehaviour
 {
@@ -12,6 +13,14 @@ public class ShapeMovement : MonoBehaviour
     public float dashForce = 15f;
     public float dashCooldown = 1f;
     public float acceleration = 20f;
+
+    [Header("Stamina Settings")]
+    public float maxStamina;
+    public float currentStamina;
+
+    public float jumpCost;
+    public float dashCost;
+    public float attackCost;
 
     [Header("Ground Detection")]
     public Transform groundCheck;
@@ -26,6 +35,7 @@ public class ShapeMovement : MonoBehaviour
 
     [Header("References")]
     public GameObject shapeSprite;
+    public Slider staminaBar;
 
     private Animator animator;
 
@@ -35,6 +45,7 @@ public class ShapeMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         animator = shapeSprite.GetComponent<Animator>();
+        currentStamina = maxStamina;
     }
 
     void Update()
@@ -84,6 +95,7 @@ public class ShapeMovement : MonoBehaviour
         if (rb.linearVelocityY > 0f)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocityX, rb.linearVelocityY * jumpDecayMultiplier);
+            SubtractStamina(jumpCost);
         }
     }
 
@@ -98,6 +110,9 @@ public class ShapeMovement : MonoBehaviour
                 dashDirection = Vector2.right; // Dash right by default if player isn't moving - we could change this behavior
 
             rb.linearVelocity = new Vector2(rb.linearVelocityX + (dashDirection.x * dashForce), rb.linearVelocityY);
+
+            SubtractStamina(dashCost);
+            
             Invoke(nameof(ResetDash), dashCooldown);
 
         }
@@ -114,5 +129,15 @@ public class ShapeMovement : MonoBehaviour
         }
 
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+    }
+
+    public void SubtractStamina(float val)
+    {
+        currentStamina -= val;
+        UpdateStaminaBar();
+    }
+    public void UpdateStaminaBar()
+    {
+        staminaBar.value = currentStamina/maxStamina;
     }
 }
