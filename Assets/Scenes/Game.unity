@@ -1873,6 +1873,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 739630548}
     - target: {fileID: 2076671547339100262, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
+      propertyPath: regenHealth
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2076671547339100262, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
       propertyPath: healthSlider
       value: 
       objectReference: {fileID: 739630548}
@@ -1960,6 +1964,14 @@ PrefabInstance:
       propertyPath: shapeSprite
       value: 
       objectReference: {fileID: 5773185895822964046}
+    - target: {fileID: 6485272454972369542, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
+      propertyPath: staminaDelay
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6485272454972369542, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
+      propertyPath: staminaRegenRate
+      value: 20
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:

@@ -17,10 +17,14 @@ public class ShapeMovement : MonoBehaviour
     [Header("Stamina Settings")]
     public float maxStamina;
     public float currentStamina;
+    public float staminaRegenRate;
+    public float staminaDelay;
 
     public float jumpCost;
     public float dashCost;
     public float attackCost;
+
+    private float staminaRegenTimer;
 
     [Header("Ground Detection")]
     public Transform groundCheck;
@@ -51,6 +55,7 @@ public class ShapeMovement : MonoBehaviour
     void Update()
     {
         CheckGrounded();
+        RegenStamina();
     }
 
     void FixedUpdate()
@@ -134,10 +139,25 @@ public class ShapeMovement : MonoBehaviour
     public void SubtractStamina(float val)
     {
         currentStamina -= val;
+        staminaRegenTimer = 0f; // Reset regen delay
+        currentStamina = Mathf.Max(currentStamina, 0f);
         UpdateStaminaBar();
     }
     public void UpdateStaminaBar()
     {
         staminaBar.value = currentStamina/maxStamina;
+    }
+    void RegenStamina()
+    {
+        if (currentStamina < maxStamina)
+        {
+            staminaRegenTimer += Time.deltaTime;
+            if (staminaRegenTimer >= staminaDelay)
+            {
+                currentStamina += staminaRegenRate * Time.deltaTime;
+                currentStamina = Mathf.Min(currentStamina, maxStamina);
+                UpdateStaminaBar();
+            }
+        }
     }
 }
