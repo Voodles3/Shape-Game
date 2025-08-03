@@ -1,15 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class SquareMovement : MonoBehaviour
+public class ShapeMovement : MonoBehaviour
 {
-    InputActions inputActions;
-    InputAction jumpAction;
-    InputAction dashAction;
-    Rigidbody2D rb;
-
-    Vector2 inputs;
-
     [Header("Movement Settings")]
     public float moveSpeed = 5f;
     public float jumpForce = 12f;
@@ -22,31 +15,13 @@ public class SquareMovement : MonoBehaviour
     public float groundCheckRadius = 0.1f;
     public LayerMask groundLayer;
 
-    bool isGrounded;
-    bool canDash = true;
-    bool justJumped = false;
+    private Rigidbody2D rb;
 
-    void Awake()
-    {
-        inputActions = InputManager.Instance.InputActions;
+    private Vector2 inputs;
+    private bool isGrounded;
+    private bool canDash = true;
 
-        jumpAction = inputActions.Player.Jump;
-        dashAction = inputActions.Player.Dash;
-    }
-
-    void OnEnable()
-    {
-        jumpAction.performed += OnJump;
-        dashAction.performed += OnDash;
-        inputActions.Player.Enable();
-    }
-
-    void OnDisable()
-    {
-        jumpAction.performed -= OnJump;
-        dashAction.performed -= OnDash;
-        inputActions.Player.Disable();
-    }
+    public void SetMoveInput(Vector2 input) => inputs = input;
 
     void Start()
     {
@@ -55,56 +30,45 @@ public class SquareMovement : MonoBehaviour
 
     void Update()
     {
-        ReceiveInput();
         CheckGrounded();
     }
 
     void FixedUpdate()
     {
         MovePlayer();
-        justJumped = false;
-    }
-
-    void ReceiveInput()
-    {
-        inputs = inputActions.Player.Move.ReadValue<Vector2>();
     }
 
     void MovePlayer()
     {
         float targetSpeed = inputs.x * moveSpeed;
-        float newAcceleration = isGrounded ? acceleration : acceleration / 2f;
-        float newX = Mathf.Lerp(rb.linearVelocityX, targetSpeed, newAcceleration * Time.fixedDeltaTime);
-        rb.linearVelocity = new Vector2(newX, rb.linearVelocityY);
+        float appliedAccel = isGrounded ? acceleration : acceleration / 2f; // Halved acceleration if midair
+        float newX = Mathf.Lerp(rb.linearVelocityX, targetSpeed, appliedAccel * Time.fixedDeltaTime);
+        rb.linearVelocity = new Vector2(newX, rb.linearVelocityY); // Setting velocity directly instead of adding force, for controlled acceleration and fighting game style movement
     }
 
-    void OnJump(InputAction.CallbackContext context)
+    public void Jump()
     {
         if (isGrounded)
         {
-            justJumped = true;
             rb.linearVelocity = new Vector2(rb.linearVelocityX, jumpForce);
         }
     }
 
-    void OnDash(InputAction.CallbackContext context)
+    public void Dash()
     {
         if (canDash)
         {
             canDash = false;
             Vector2 dashDirection = new Vector2(inputs.x, 0).normalized;
             if (dashDirection == Vector2.zero)
-                dashDirection = Vector2.right;
+                dashDirection = Vector2.right; // Dash right by default if player isn't moving - we could change this behavior
 
             rb.linearVelocity = new Vector2(dashDirection.x * dashForce, rb.linearVelocityY);
             Invoke(nameof(ResetDash), dashCooldown);
         }
     }
 
-    void ResetDash()
-    {
-        canDash = true;
-    }
+    void ResetDash() => canDash = true;
 
     void CheckGrounded()
     {
