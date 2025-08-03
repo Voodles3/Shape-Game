@@ -3028,6 +3028,10 @@ PrefabInstance:
       propertyPath: attackCooldown
       value: 0.2
       objectReference: {fileID: 0}
+    - target: {fileID: 6055161371882255912, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
+      propertyPath: attackDuration
+      value: 0.24
+      objectReference: {fileID: 0}
     - target: {fileID: 6485272454972369542, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
       propertyPath: dashCost
       value: 15
