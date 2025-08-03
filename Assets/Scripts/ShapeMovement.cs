@@ -24,11 +24,17 @@ public class ShapeMovement : MonoBehaviour
     private bool isGrounded;
     private bool canDash = true;
 
+    [Header("References")]
+    public GameObject shapeSprite;
+
+    private Animator animator;
+
     public void SetMoveInputs(Vector2 input) => currentInputs = input;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = shapeSprite.GetComponent<Animator>();
     }
 
     void Update()
@@ -39,6 +45,20 @@ public class ShapeMovement : MonoBehaviour
     void FixedUpdate()
     {
         MovePlayer();
+        ChangeAnimationBools();
+        
+    }
+
+    void ChangeAnimationBools()
+    {
+        if (isGrounded)
+        {
+            animator.SetBool("Jump", false);
+        }
+        if (canDash)
+        {
+            animator.SetBool("Dash", false);
+        }
     }
 
     void MovePlayer()
@@ -54,8 +74,10 @@ public class ShapeMovement : MonoBehaviour
         if (isGrounded)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocityX, jumpForce);
+            animator.SetBool("Jump", true);
         }
     }
+
 
     public void ReleaseJump()
     {
@@ -69,6 +91,7 @@ public class ShapeMovement : MonoBehaviour
     {
         if (canDash)
         {
+            animator.SetBool("Dash",true);
             canDash = false;
             Vector2 dashDirection = new Vector2(currentInputs.x, 0).normalized;
             if (dashDirection == Vector2.zero)
@@ -76,6 +99,7 @@ public class ShapeMovement : MonoBehaviour
 
             rb.linearVelocity = new Vector2(rb.linearVelocityX + (dashDirection.x * dashForce), rb.linearVelocityY);
             Invoke(nameof(ResetDash), dashCooldown);
+
         }
     }
 
