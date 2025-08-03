@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class Health : MonoBehaviour
 {
@@ -9,6 +10,10 @@ public class Health : MonoBehaviour
     [SerializeField] private float currentHealth;
 
     public UnityEvent OnDeath; // Yo I discovered Unity events are pretty useful, check out the inspector
+                               //WHAT THE FUCK ARE UNITY EVENTS
+
+
+    public Slider healthSlider;
 
     public float MaxHealth => maxHealth;
     public float CurrentHealth => currentHealth;
@@ -26,17 +31,26 @@ public class Health : MonoBehaviour
         }
 
         currentHealth = maxHealth;
+        UpdateHealthBar();
     }
 
+
+    public void UpdateHealthBar()
+    {
+        healthSlider.value = currentHealth/maxHealth;
+    }
     public void TakeDamage(int amount)
     {
         currentHealth = Mathf.Max(currentHealth - amount, 0); // Don't let health go below 0
+        UpdateHealthBar();
         if (currentHealth <= 0) Die();
+
     }
 
     public void Heal(int amount)
     {
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
+        UpdateHealthBar();
     }
 
     private void Die()
@@ -47,5 +61,6 @@ public class Health : MonoBehaviour
     public void Revive()
     {
         currentHealth = maxHealth;
+        UpdateHealthBar();
     }
 }
