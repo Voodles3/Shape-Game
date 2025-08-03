@@ -64,7 +64,7 @@ public class ShapeMovement : MonoBehaviour
     {
         MovePlayer();
         ChangeAnimationBools();
-        if(currentInputs.x != 0)
+        if (currentInputs.x != 0)
         {
             lastInputs = currentInputs;
         }
@@ -92,8 +92,9 @@ public class ShapeMovement : MonoBehaviour
 
     public void Jump()
     {
-        if (isGrounded)
+        if (isGrounded && currentStamina >= jumpCost)
         {
+            SubtractStamina(jumpCost);
             rb.linearVelocity = new Vector2(rb.linearVelocityX, jumpForce);
             animator.SetBool("Jump", true);
         }
@@ -105,26 +106,24 @@ public class ShapeMovement : MonoBehaviour
         if (rb.linearVelocityY > 0f)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocityX, rb.linearVelocityY * jumpDecayMultiplier);
-            SubtractStamina(jumpCost);
         }
     }
 
     public void Dash()
     {
-        if (canDash)
+        if (canDash && currentStamina >= dashCost)
         {
-            animator.SetBool("Dash",true);
+            animator.SetBool("Dash", true);
             canDash = false;
             Vector2 dashDirection = new Vector2(currentInputs.x, 0).normalized;
             if (dashDirection == Vector2.zero)
-                dashDirection = new Vector2(lastInputs.x, 0).normalized; ; // Dash right by default if player isn't moving - we could change this behavior
+                dashDirection = new Vector2(lastInputs.x, 0).normalized; ; // Dash in direction player last moved
 
             rb.linearVelocity = new Vector2(rb.linearVelocityX + (dashDirection.x * dashForce), rb.linearVelocityY);
 
             SubtractStamina(dashCost);
-            
-            Invoke(nameof(ResetDash), dashCooldown);
 
+            Invoke(nameof(ResetDash), dashCooldown);
         }
     }
 
@@ -144,14 +143,16 @@ public class ShapeMovement : MonoBehaviour
     public void SubtractStamina(float val)
     {
         currentStamina -= val;
-        staminaRegenTimer = 0f; 
+        staminaRegenTimer = 0f;
         currentStamina = Mathf.Max(currentStamina, 0f);
         UpdateStaminaBar();
     }
+
     public void UpdateStaminaBar()
     {
-        staminaBar.value = currentStamina/maxStamina;
+        staminaBar.value = currentStamina / maxStamina;
     }
+
     void RegenStamina()
     {
         if (currentStamina < maxStamina)

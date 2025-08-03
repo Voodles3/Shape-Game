@@ -5,7 +5,7 @@ public abstract class ShapeAttack : MonoBehaviour
 {
     public GameObject shapeSprite;
     Animator animator;
-    ShapeMovement shapeMoveScript;
+    ShapeMovement movement;
     public bool canAttack = true;
     public bool isAttacking = false;
     public float attackCooldown;
@@ -14,24 +14,24 @@ public abstract class ShapeAttack : MonoBehaviour
     public void Start()
     {
         animator = shapeSprite.GetComponent<Animator>();
-        shapeMoveScript = GetComponent<ShapeMovement>();
+        movement = GetComponent<ShapeMovement>();
     }
 
-   
 
-    public virtual void Attack() 
+
+    public virtual void Attack()
     {
-        if (canAttack)
+        if (canAttack && movement.currentStamina >= movement.attackCost)
         {
             canAttack = false;
             isAttacking = false;
             animator.SetBool("attack", true);
-            Vector2 attackDirection = new Vector2(shapeMoveScript.currentInputs.x, 0).normalized;
-            if (shapeMoveScript.currentInputs.x == 0)
-                attackDirection = new Vector2(shapeMoveScript.lastInputs.x, 0).normalized;
+            Vector2 attackDirection = new Vector2(movement.currentInputs.x, 0).normalized;
+            if (movement.currentInputs.x == 0)
+                attackDirection = new Vector2(movement.lastInputs.x, 0).normalized;
             Debug.Log(attackDirection.x);
             animator.SetFloat("attackDirection", attackDirection.x);
-            shapeMoveScript.SubtractStamina(shapeMoveScript.attackCost);
+            movement.SubtractStamina(movement.attackCost);
             Invoke(nameof(StopAttack), attackDuration);
             Invoke(nameof(ResetAttack), attackCooldown);
         }
@@ -41,7 +41,7 @@ public abstract class ShapeAttack : MonoBehaviour
     {
         if (isAttacking)
         {
-            if(collision.gameObject.tag == "Enemy")
+            if (collision.gameObject.CompareTag("Enemy"))
             {
                 //do dmagae
             }

@@ -1,14 +1,13 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameManager : MonoBehaviour
+public class UIManager : MonoBehaviour
 {
-    public static GameManager Instance { get; private set; }
+    public static UIManager Instance { get; private set; }
 
     public GameObject pauseUi;
     public GameObject deathUi;
     public bool isPaused;
-    public bool isDead = false;
 
 
     void Awake()
@@ -20,12 +19,11 @@ public class GameManager : MonoBehaviour
         }
 
         Instance = this;
-        isDead = false;
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) && isDead == false)
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (isPaused)
                 ResumeGame();
