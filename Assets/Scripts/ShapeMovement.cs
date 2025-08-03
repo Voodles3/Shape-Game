@@ -115,16 +115,21 @@ public class ShapeMovement : MonoBehaviour
         {
             animator.SetBool("Dash", true);
             canDash = false;
-            Vector2 dashDirection = new Vector2(currentInputs.x, 0).normalized;
-            if (dashDirection == Vector2.zero)
-                dashDirection = new Vector2(lastInputs.x, 0).normalized; ; // Dash in direction player last moved
-
-            rb.linearVelocity = new Vector2(rb.linearVelocityX + (dashDirection.x * dashForce), rb.linearVelocityY);
+            DashMove(dashForce);
 
             SubtractStamina(dashCost);
 
             Invoke(nameof(ResetDash), dashCooldown);
         }
+    }
+
+    public void DashMove(float dashPower) // made this a seperate method because it will be called when attacking
+    {
+        Vector2 dashDirection = new Vector2(currentInputs.x, 0).normalized;
+        if (dashDirection == Vector2.zero)
+            dashDirection = new Vector2(lastInputs.x, 0).normalized; ; // Dash in direction player last moved
+
+        rb.linearVelocity = new Vector2(rb.linearVelocityX + (dashDirection.x * dashPower), rb.linearVelocityY);
     }
 
     void ResetDash() => canDash = true;
