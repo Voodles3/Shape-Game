@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour
         inputActions.Player.Enable();
         attackAction.performed += OnAttack;
         jumpAction.performed += OnJump;
+        jumpAction.canceled += OnReleaseJump;
         dashAction.performed += OnDash;
     }
 
@@ -37,13 +38,14 @@ public class PlayerController : MonoBehaviour
         inputActions.Player.Disable();
         attackAction.performed -= OnAttack;
         jumpAction.performed -= OnJump;
+        jumpAction.canceled -= OnReleaseJump;
         dashAction.performed -= OnDash;
     }
 
     void Update()
     {
         Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
-        movement.SetMoveInput(moveInput);
+        movement.SetMoveInputs(moveInput);
     }
 
     void OnAttack(InputAction.CallbackContext context)
@@ -54,6 +56,11 @@ public class PlayerController : MonoBehaviour
     void OnJump(InputAction.CallbackContext ctx)
     {
         movement.Jump();
+    }
+
+    void OnReleaseJump(InputAction.CallbackContext ctx)
+    {
+        movement.ReleaseJump();
     }
 
     void OnDash(InputAction.CallbackContext ctx)

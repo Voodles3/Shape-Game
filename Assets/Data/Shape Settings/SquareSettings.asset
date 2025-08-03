@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: SquareSettings
   m_EditorClassIdentifier: 
   shapeName: Square
-  defaultHealth: 110
+  defaultHealth: 100
