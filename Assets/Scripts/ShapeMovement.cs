@@ -32,6 +32,7 @@ public class ShapeMovement : MonoBehaviour
     public LayerMask groundLayer;
 
     private Rigidbody2D rb;
+    private Collider2D col;
 
     public Vector2 currentInputs;
     public Vector2 lastInputs;
@@ -49,6 +50,7 @@ public class ShapeMovement : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        col = GetComponent<Collider2D>();
         animator = shapeSprite.GetComponent<Animator>();
         currentStamina = maxStamina;
         lastInputs.x = 1;
@@ -141,8 +143,15 @@ public class ShapeMovement : MonoBehaviour
             Debug.LogWarning("GroundCheck transform not assigned.");
             return;
         }
+        Bounds bounds = col.bounds;
 
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+        float checkHeight = 0.05f; // Thin strip under player
+        float inset = 0.02f; // Inset from sides to avoid unwanted edge contact
+
+        Vector2 areaTopLeft = new(bounds.min.x + inset, bounds.min.y - checkHeight);
+        Vector2 areaBottomRight = new(bounds.max.x - inset, bounds.min.y);
+
+        isGrounded = Physics2D.OverlapArea(areaTopLeft, areaBottomRight, groundLayer);
     }
 
     public void SubtractStamina(float val)
@@ -171,4 +180,29 @@ public class ShapeMovement : MonoBehaviour
             }
         }
     }
+
+    // Uncomment if you want to visualize the ground check area
+    // void OnDrawGizmosSelected()
+    // {
+    //     if (!Application.isPlaying) return; // Prevent errors if not running
+
+    //     if (col == null)
+    //         col = GetComponent<Collider2D>();
+    //     if (col == null) return;
+
+    //     Bounds bounds = col.bounds;
+
+    //     float checkHeight = 0.05f;
+    //     float inset = 0.02f;
+
+    //     Vector2 topLeft = new Vector2(bounds.min.x + inset, bounds.min.y - checkHeight);
+    //     Vector2 bottomRight = new Vector2(bounds.max.x - inset, bounds.min.y);
+    //     Vector2 center = (topLeft + bottomRight) / 2f;
+    //     Vector2 size = bottomRight - topLeft;
+
+    //     Gizmos.color = Color.green;
+    //     Gizmos.DrawWireCube(center, size);
+    // }
+
+
 }
