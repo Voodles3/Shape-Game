@@ -9,19 +9,21 @@ public abstract class ShapeAttack : MonoBehaviour
     public bool canAttack = true;
     public bool isAttacking = false;
     public bool isSpecialAttacking = false;
+    public bool specialAttackEnabled = false; // used by circle and triangle so it is in attacking mode yk
     public float attackCooldown;
     public float attackDuration;
     public int damage;
+    public int ogDamage;
     public float attackDashForce;
 
     public float specialAttackDuration;
     public int specialAttackDamage;
 
     private Animator animator;
-    private Rigidbody2D rb;
+    public Rigidbody2D rb;
     public ShapeMovement movement;
     public Health health;
-    private float normalGravity;
+    public float normalGravity;
 
     public void Start()
     {
@@ -30,6 +32,7 @@ public abstract class ShapeAttack : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         health = GetComponent<Health>();
         normalGravity = rb.gravityScale;
+        ogDamage = damage;
 
         attackHitbox.enabled = false;
     }
@@ -71,7 +74,7 @@ public abstract class ShapeAttack : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!isAttacking) return;
+        if (!isAttacking && !specialAttackEnabled) return;
 
         if (other.TryGetComponent(out Health health) && other.gameObject != gameObject)
         {
