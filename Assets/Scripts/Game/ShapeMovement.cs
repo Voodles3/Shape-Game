@@ -205,6 +205,7 @@ public class ShapeMovement : MonoBehaviour
 
     public void UpdateManaBar()
     {
+        if (!isPlayerControlled) return;
         manaBar.value = currentMana / maxMana;
     }
 

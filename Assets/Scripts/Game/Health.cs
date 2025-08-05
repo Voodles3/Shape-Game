@@ -10,6 +10,7 @@ public class Health : MonoBehaviour
     public bool isSquareSpecialAttacking = false;
     public int specialAttackDamageModifier;
     [SerializeField] private float currentHealth;
+    public ParticleSystem bloodSplash;
 
     public UnityEvent OnDeath; // Yo I discovered Unity events are pretty useful, check out the inspector
                                //WHAT THE FUCK ARE UNITY EVENTS
@@ -51,6 +52,7 @@ public class Health : MonoBehaviour
         }
         currentHealth = Mathf.Max(currentHealth - amount, 0); // Don't let health go below 0
         UpdateHealthBar();
+        bloodSplash.Play();
         if (currentHealth <= 0) Die();
 
     }
