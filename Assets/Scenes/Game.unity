@@ -1374,11 +1374,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 186.5, y: 45.100006}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!61 &1399566718 stripped
-BoxCollider2D:
-  m_CorrespondingSourceObject: {fileID: 829811223189112141, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-  m_PrefabInstance: {fileID: 5773185895822964045}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1453097159
 GameObject:
   m_ObjectHideFlags: 0
@@ -2116,6 +2111,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shapeSettings: {fileID: 11400000, guid: 5e6e58b4bf1aee0429ef36d3daaac6ab, type: 2}
+  isSquareSpecialAttacking: 0
+  specialAttackDamageModifier: 0
   currentHealth: 0
   OnDeath:
     m_PersistentCalls:
@@ -2639,93 +2636,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2076671547339100262, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-      propertyPath: OnDeath.m_PersistentCalls.m_Calls.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2076671547339100262, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-      propertyPath: OnDeath.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
-      value: 1
+    - target: {fileID: 1412011230790123341, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2076671547339100262, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
       propertyPath: OnDeath.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 5094783260622953934}
-    - target: {fileID: 2076671547339100262, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-      propertyPath: OnDeath.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2076671547339100262, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-      propertyPath: OnDeath.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: DieCanvas
-      objectReference: {fileID: 0}
-    - target: {fileID: 2076671547339100262, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-      propertyPath: OnDeath.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
-      value: UIManager, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 2076671547339100262, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-      propertyPath: OnDeath.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
-    - target: {fileID: 2683892294514345303, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2683892294514345303, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2683892294514345303, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 3727714373426777396, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
       propertyPath: m_Name
       value: Square
-      objectReference: {fileID: 0}
-    - target: {fileID: 3727714373426777396, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3979445308283484646, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3979445308283484646, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3979445308283484646, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4422147691534613631, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-      propertyPath: m_SpriteTilingProperty.pivot.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4422147691534613631, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-      propertyPath: m_SpriteTilingProperty.pivot.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4422147691534613631, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-      propertyPath: m_SpriteTilingProperty.newSize.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4422147691534613631, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-      propertyPath: m_SpriteTilingProperty.newSize.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4422147691534613631, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-      propertyPath: m_SpriteTilingProperty.oldSize.x
-      value: 1.28
-      objectReference: {fileID: 0}
-    - target: {fileID: 4422147691534613631, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-      propertyPath: m_SpriteTilingProperty.oldSize.y
-      value: 1.28
-      objectReference: {fileID: 0}
-    - target: {fileID: 4422147691534613631, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-      propertyPath: m_SpriteTilingProperty.adaptiveTilingThreshold
-      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5441624928381295520, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
       propertyPath: m_AnchorMax.x
@@ -2774,26 +2695,6 @@ PrefabInstance:
     - target: {fileID: 5749646289338459327, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6055161371882255912, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-      propertyPath: damage
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 6055161371882255912, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-      propertyPath: attackHitbox
-      value: 
-      objectReference: {fileID: 1399566718}
-    - target: {fileID: 6055161371882255912, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-      propertyPath: attackDashForce
-      value: 45
-      objectReference: {fileID: 0}
-    - target: {fileID: 6485272454972369542, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-      propertyPath: dashForce
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 6485272454972369542, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-      propertyPath: staminaRegenRate
-      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 8214188566672672112, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
       propertyPath: m_AnchorMax.x

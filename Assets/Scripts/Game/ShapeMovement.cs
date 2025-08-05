@@ -11,6 +11,8 @@ public class ShapeMovement : MonoBehaviour
     public float moveSpeed = 5f;
     public float jumpForce = 12f;
 
+    public float originalMoveSpeed;
+
     [Tooltip("The value to multiply the player's Y velocity by when the player releases jump. Lower values = more control over jump height.")]
     public float jumpDecayMultiplier = 0.5f;
     public float dashForce = 15f;
@@ -21,13 +23,22 @@ public class ShapeMovement : MonoBehaviour
     public float maxStamina;
     public float currentStamina;
     public float staminaRegenRate;
-    public float staminaDelay;
+    public float staminaRegenDelay;
 
     public float jumpCost;
     public float dashCost;
     public float attackCost;
 
     private float staminaRegenTimer;
+
+    [Header("Mana Settings")]
+
+    public float maxMana;
+    public float currentMana;
+    public float manaRegenRate;
+    public float manaRegenDelay;
+
+    public float manaRegenTimer;
 
     [Header("Ground Detection")]
     public Transform groundCheck;
@@ -45,6 +56,7 @@ public class ShapeMovement : MonoBehaviour
     [Header("References")]
     public GameObject shapeSprite;
     public Slider staminaBar;
+    public Slider manaBar;
 
     private Animator animator;
 
@@ -57,13 +69,18 @@ public class ShapeMovement : MonoBehaviour
         col = GetComponent<Collider2D>();
         animator = shapeSprite.GetComponent<Animator>();
         currentStamina = maxStamina;
+        currentMana = 0f;
         lastInputs.x = 1;
+        originalMoveSpeed = moveSpeed;
+
+        UpdateManaBar();
     }
 
     void Update()
     {
         CheckGrounded();
         if (isPlayerControlled) RegenStamina();
+        if (isPlayerControlled) RegenMana();
     }
 
     void FixedUpdate()
@@ -169,9 +186,23 @@ public class ShapeMovement : MonoBehaviour
         UpdateStaminaBar();
     }
 
+    public void ResetMana()
+    {
+        if (!isPlayerControlled) return;
+
+        manaRegenTimer = 0f;
+        currentMana = 0f;
+        UpdateManaBar();
+    }
+
     public void UpdateStaminaBar()
     {
         staminaBar.value = currentStamina / maxStamina;
+    }
+
+    public void UpdateManaBar()
+    {
+        manaBar.value = currentMana / maxMana;
     }
 
     void RegenStamina()
@@ -179,11 +210,25 @@ public class ShapeMovement : MonoBehaviour
         if (currentStamina < maxStamina)
         {
             staminaRegenTimer += Time.deltaTime;
-            if (staminaRegenTimer >= staminaDelay)
+            if (staminaRegenTimer >= staminaRegenDelay)
             {
                 currentStamina += staminaRegenRate * Time.deltaTime;
                 currentStamina = Mathf.Min(currentStamina, maxStamina);
                 UpdateStaminaBar();
+            }
+        }
+    }
+
+    void RegenMana()
+    {
+        if (currentMana < maxMana)
+        {
+            manaRegenTimer += Time.deltaTime;
+            if (manaRegenTimer >= manaRegenDelay)
+            {
+                currentMana += manaRegenRate * Time.deltaTime;
+                currentMana = Mathf.Min(currentMana, maxMana);
+                UpdateManaBar();
             }
         }
     }
@@ -198,7 +243,7 @@ public class ShapeMovement : MonoBehaviour
         if (isPlayerControlled) PlayerManager.Instance.UnregisterActivePlayer();
     }
 
-    // Uncomment if you want to visualize the ground check area
+    // Uncomment if you want to visualize the ground check area (nah im good)
     // void OnDrawGizmosSelected()
     // {
     //     if (!Application.isPlaying) return; // Prevent errors if not running

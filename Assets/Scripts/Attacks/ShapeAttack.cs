@@ -8,14 +8,19 @@ public abstract class ShapeAttack : MonoBehaviour
 
     public bool canAttack = true;
     public bool isAttacking = false;
+    public bool isSpecialAttacking = false;
     public float attackCooldown;
     public float attackDuration;
     public int damage;
     public float attackDashForce;
 
+    public float specialAttackDuration;
+    public int specialAttackDamage;
+
     private Animator animator;
     private Rigidbody2D rb;
-    private ShapeMovement movement;
+    public ShapeMovement movement;
+    public Health health;
     private float normalGravity;
 
     public void Start()
@@ -23,6 +28,7 @@ public abstract class ShapeAttack : MonoBehaviour
         animator = shapeSprite.GetComponent<Animator>();
         movement = GetComponent<ShapeMovement>();
         rb = GetComponent<Rigidbody2D>();
+        health = GetComponent<Health>();
         normalGravity = rb.gravityScale;
 
         attackHitbox.enabled = false;
@@ -30,7 +36,7 @@ public abstract class ShapeAttack : MonoBehaviour
 
     public virtual void Attack()
     {
-        if (!canAttack) return;
+        if (!canAttack || isSpecialAttacking) return;
         if (movement.currentStamina < movement.attackCost) return;
 
         canAttack = false;
@@ -53,6 +59,16 @@ public abstract class ShapeAttack : MonoBehaviour
         Invoke(nameof(ResetAttack), attackCooldown);
     }
 
+    public virtual void SpecialAttack()
+    {
+        if (isAttacking) return;
+        if (movement.currentMana < movement.maxMana) return;
+        isSpecialAttacking = true;
+        movement.ResetMana();
+
+        Invoke(nameof(StopSpecialAttack), specialAttackDuration);
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (!isAttacking) return;
@@ -60,7 +76,6 @@ public abstract class ShapeAttack : MonoBehaviour
         if (other.TryGetComponent(out Health health) && other.gameObject != gameObject)
         {
             health.TakeDamage(damage);
-
             attackHitbox.enabled = false;
         }
     }
@@ -75,4 +90,10 @@ public abstract class ShapeAttack : MonoBehaviour
     }
 
     void ResetAttack() => canAttack = true;
+
+
+    public virtual void StopSpecialAttack()
+    {
+        isSpecialAttacking = false;
+    }
 }

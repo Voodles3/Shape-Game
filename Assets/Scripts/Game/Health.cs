@@ -7,6 +7,8 @@ public class Health : MonoBehaviour
     [SerializeField] private ShapeSettings shapeSettings;
 
     private float maxHealth;
+    public bool isSquareSpecialAttacking = false;
+    public int specialAttackDamageModifier;
     [SerializeField] private float currentHealth;
 
     public UnityEvent OnDeath; // Yo I discovered Unity events are pretty useful, check out the inspector
@@ -43,6 +45,10 @@ public class Health : MonoBehaviour
 
     public void TakeDamage(int amount)
     {
+        if (isSquareSpecialAttacking)
+        {
+            amount = amount / specialAttackDamageModifier;
+        }
         currentHealth = Mathf.Max(currentHealth - amount, 0); // Don't let health go below 0
         UpdateHealthBar();
         if (currentHealth <= 0) Die();
