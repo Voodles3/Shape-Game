@@ -12,6 +12,17 @@ public class MainMenuUI : MonoBehaviour
         SceneManager.LoadScene(1);
     }
 
+    public void ContinueToMatch()
+    {
+        SceneManager.LoadScene(2);
+    }
+
+    public void SetPlayer(string name)
+    {
+        ShapeManager.Instance.SetPlayer(name);
+        Invoke(nameof(ContinueToMatch), 0.5f);
+    }
+
     public void Quit()
     {
         Application.Quit();

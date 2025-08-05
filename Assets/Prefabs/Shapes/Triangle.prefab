@@ -32,8 +32,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 4869489288584574521}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -362,19 +362,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a781c77b765a8d4fb1a97853007b150, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isPlayerControlled: 1
   moveSpeed: 7
   jumpForce: 15
+  originalMoveSpeed: 0
   jumpDecayMultiplier: 0.5
-  dashForce: 30
+  dashForce: 50
   dashCooldown: 0
   acceleration: 40
   maxStamina: 100
   currentStamina: 0
-  staminaRegenRate: 20
-  staminaDelay: 1
+  staminaRegenRate: 40
+  staminaRegenDelay: 0
   jumpCost: 20
   dashCost: 15
   attackCost: 20
+  maxMana: 0
+  currentMana: 0
+  manaRegenRate: 0
+  manaRegenDelay: 0
+  manaRegenTimer: 0
   groundCheck: {fileID: 2867494255349920684}
   groundCheckRadius: 0.1
   groundLayer:
@@ -382,8 +389,11 @@ MonoBehaviour:
     m_Bits: 8
   currentInputs: {x: 0, y: 0}
   lastInputs: {x: 0, y: 0}
+  canMove: 0
   shapeSprite: {fileID: 5335582525157994458}
   staminaBar: {fileID: 3562753927342809782}
+  manaBar: {fileID: 0}
+  jumpParticles: {fileID: 0}
 --- !u!114 &5026342930763616842
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -397,7 +407,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shapeSettings: {fileID: 11400000, guid: e5a7a60211b676946b085e6f9a09537f, type: 2}
+  isSquareSpecialAttacking: 0
+  specialAttackDamageMultiplier: 0
   currentHealth: 0
+  bloodSplash: {fileID: 0}
   OnDeath:
     m_PersistentCalls:
       m_Calls:
@@ -405,6 +418,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
+        m_MethodName: DieCanvas
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -439,11 +464,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shapeSprite: {fileID: 5335582525157994458}
+  attackHitbox: {fileID: 0}
   canAttack: 1
   isAttacking: 0
+  isSpecialAttacking: 0
+  specialAttackEnabled: 0
   attackCooldown: 0.2
   attackDuration: 0.24
-  damage: 0
+  damage: 10
+  ogDamage: 0
+  attackDashForce: 45
+  specialAttackDuration: 0
+  specialAttackDamage: 0
+  rb: {fileID: 0}
+  movement: {fileID: 0}
+  health: {fileID: 0}
+  normalGravity: 0
+  moveSpeedDuringSpecialAttack: 0
 --- !u!1 &5335582525157994458
 GameObject:
   m_ObjectHideFlags: 0
@@ -751,7 +788,7 @@ RectTransform:
   m_Father: {fileID: 3879925892580511175}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -929,7 +966,7 @@ RectTransform:
   m_Father: {fileID: 8273863413537222506}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -1240,8 +1277,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1169555129451018323}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
