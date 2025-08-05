@@ -72,6 +72,10 @@ public class UIManager : MonoBehaviour
     }
     public void MainMenu()
     {
+        ResumeGame();
+        hasWon = false;
+        winUi.SetActive(false);
+        Time.timeScale = 1;
         SceneManager.LoadScene(0);
     }
 
