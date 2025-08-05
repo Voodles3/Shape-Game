@@ -6,24 +6,24 @@ public abstract class ShapeAttack : MonoBehaviour
     public GameObject shapeSprite;
     public Collider2D attackHitbox;
 
-    public bool canAttack = true;
-    public bool isAttacking = false;
-    public bool isSpecialAttacking = false;
-    public bool specialAttackEnabled = false; // used by circle and triangle so it is in attacking mode yk
+    [HideInInspector] public bool canAttack = true;
+    [HideInInspector] public bool isAttacking = false;
+    [HideInInspector] public bool isSpecialAttacking = false;
+    [HideInInspector] public bool specialAttackEnabled = false; // used by circle and triangle so it is in attacking mode yk
     public float attackCooldown;
     public float attackDuration;
     public int damage;
-    public int ogDamage;
+    [HideInInspector] public int ogDamage;
     public float attackDashForce;
 
     public float specialAttackDuration;
     public int specialAttackDamage;
 
     private Animator animator;
-    public Rigidbody2D rb;
-    public ShapeMovement movement;
-    public Health health;
-    public float normalGravity;
+    [HideInInspector] public Rigidbody2D rb;
+    [HideInInspector] public ShapeMovement movement;
+    [HideInInspector] public Health health;
+    [HideInInspector] public float normalGravity;
 
     public void Start()
     {
@@ -39,7 +39,7 @@ public abstract class ShapeAttack : MonoBehaviour
 
     public virtual void Attack()
     {
-        if (!canAttack || isSpecialAttacking) return;
+        if (!canAttack) return;
         if (movement.currentStamina < movement.attackCost) return;
 
         canAttack = false;
@@ -64,12 +64,19 @@ public abstract class ShapeAttack : MonoBehaviour
 
     public virtual void SpecialAttack()
     {
-        if (isAttacking) return;
-        if (movement.currentMana < movement.maxMana) return;
         isSpecialAttacking = true;
+        attackHitbox.enabled = true;
         movement.ResetMana();
 
         Invoke(nameof(StopSpecialAttack), specialAttackDuration);
+        
+    }
+
+    public bool CanSpecialAttack()
+    {
+        if (isAttacking) return false;
+        if (movement.currentMana < movement.maxMana) return false;
+        return true;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -98,5 +105,6 @@ public abstract class ShapeAttack : MonoBehaviour
     public virtual void StopSpecialAttack()
     {
         isSpecialAttacking = false;
+        attackHitbox.enabled = false;
     }
 }

@@ -12,8 +12,10 @@ public class SquareAttack : ShapeAttack // Inherits our abstract class
 
     public override void SpecialAttack()
     {
+        if (!CanSpecialAttack()) return;
         base.SpecialAttack();
         movement.moveSpeed = moveSpeedDuringSpecialAttack;
+        damage = specialAttackDamage;
         health.isSquareSpecialAttacking = true;
     }
 
@@ -21,6 +23,7 @@ public class SquareAttack : ShapeAttack // Inherits our abstract class
     {
         base.StopSpecialAttack();
         movement.moveSpeed = movement.originalMoveSpeed;
+        damage = ogDamage;
         health.isSquareSpecialAttacking = false;
     }
 }

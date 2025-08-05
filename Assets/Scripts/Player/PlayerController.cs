@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     private ShapeAttack attack;
 
     private InputAction attackAction;
+    private InputAction specialAttackAction;
     private InputAction jumpAction;
     private InputAction dashAction;
 
@@ -19,6 +20,7 @@ public class PlayerController : MonoBehaviour
         jumpAction = inputActions.Player.Jump;
         dashAction = inputActions.Player.Dash;
         attackAction = inputActions.Player.Attack;
+        specialAttackAction = inputActions.Player.SpecialAttack;
 
         movement = GetComponent<ShapeMovement>();
         attack = GetComponent<ShapeAttack>();
@@ -28,6 +30,7 @@ public class PlayerController : MonoBehaviour
     {
         inputActions.Player.Enable();
         attackAction.performed += OnAttack;
+        specialAttackAction.performed += OnSpecialAttack;
         jumpAction.performed += OnJump;
         jumpAction.canceled += OnReleaseJump;
         dashAction.performed += OnDash;
@@ -37,6 +40,7 @@ public class PlayerController : MonoBehaviour
     {
         inputActions.Player.Disable();
         attackAction.performed -= OnAttack;
+        specialAttackAction.performed -= OnSpecialAttack;
         jumpAction.performed -= OnJump;
         jumpAction.canceled -= OnReleaseJump;
         dashAction.performed -= OnDash;
@@ -51,6 +55,11 @@ public class PlayerController : MonoBehaviour
     void OnAttack(InputAction.CallbackContext context)
     {
         attack.Attack();
+    }
+
+    void OnSpecialAttack(InputAction.CallbackContext ctx)
+    {
+        attack.SpecialAttack();
     }
 
     void OnJump(InputAction.CallbackContext ctx)

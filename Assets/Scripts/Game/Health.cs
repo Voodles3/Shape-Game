@@ -8,7 +8,7 @@ public class Health : MonoBehaviour
 
     private float maxHealth;
     public bool isSquareSpecialAttacking = false;
-    public int specialAttackDamageModifier;
+    public int specialAttackDamageMultiplier;
     [SerializeField] private float currentHealth;
     public ParticleSystem bloodSplash;
 
@@ -48,7 +48,7 @@ public class Health : MonoBehaviour
     {
         if (isSquareSpecialAttacking)
         {
-            amount = amount / specialAttackDamageModifier;
+            amount = amount * specialAttackDamageMultiplier;
         }
         currentHealth = Mathf.Max(currentHealth - amount, 0); // Don't let health go below 0
         UpdateHealthBar();

@@ -7,10 +7,7 @@ public class CircleAttack : ShapeAttack
     PhysicsMaterial2D ogMaterial;
     public float bounceSpeed;
 
-    private void Start()
-    {
-        ogMaterial = rb.sharedMaterial;
-    }
+
     public override void Attack()
     {
         base.Attack();
@@ -18,10 +15,12 @@ public class CircleAttack : ShapeAttack
 
     public override void SpecialAttack()
     {
+        if (!CanSpecialAttack()) return;
         base.SpecialAttack();
-        movement.enabled = false; // disable movement while bouncing
+        ogMaterial = rb.sharedMaterial;
+        movement.canMove = false; 
         rb.sharedMaterial = bounceMaterial;
-        rb.gravityScale = 0f;
+        //rb.gravityScale = 0f;
         damage = specialAttackDamage;
         specialAttackEnabled = true;
         StartBouncing();
@@ -30,7 +29,7 @@ public class CircleAttack : ShapeAttack
     public override void StopSpecialAttack()
     {
         base.StopSpecialAttack();
-        movement.enabled = true;
+        movement.canMove = true;
         rb.sharedMaterial = ogMaterial;
         rb.gravityScale = normalGravity;
         rb.linearVelocity = new Vector2(0f, 0f);

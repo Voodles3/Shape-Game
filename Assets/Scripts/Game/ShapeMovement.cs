@@ -52,6 +52,7 @@ public class ShapeMovement : MonoBehaviour
     [HideInInspector] public Vector2 lastInputs;
     private bool isGrounded;
     private bool canDash = true;
+    [HideInInspector] public bool canMove = true;
 
     [Header("References")]
     public GameObject shapeSprite;
@@ -90,8 +91,10 @@ public class ShapeMovement : MonoBehaviour
         {
             lastInputs = currentInputs;
         }
-
-        Move();
+        if (canMove)
+        {
+            Move();
+        }
         UpdateAnimationBools();
     }
 
