@@ -37,8 +37,10 @@ public class Health : MonoBehaviour
 
     public void UpdateHealthBar()
     {
-        healthBar.value = currentHealth/maxHealth;
+        if (healthBar == null) return;
+        healthBar.value = currentHealth / maxHealth;
     }
+
     public void TakeDamage(int amount)
     {
         currentHealth = Mathf.Max(currentHealth - amount, 0); // Don't let health go below 0

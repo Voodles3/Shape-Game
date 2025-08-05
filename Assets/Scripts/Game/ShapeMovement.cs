@@ -4,6 +4,9 @@ using UnityEngine.UI;
 
 public class ShapeMovement : MonoBehaviour
 {
+    [Header("Control Settings")]
+    public bool isPlayerControlled = true;
+
     [Header("Movement Settings")]
     public float moveSpeed = 5f;
     public float jumpForce = 12f;
@@ -14,7 +17,7 @@ public class ShapeMovement : MonoBehaviour
     public float dashCooldown = 1f;
     public float acceleration = 20f;
 
-    [Header("Stamina Settings")]
+    [Header("Stamina Settings (Player Only)")]
     public float maxStamina;
     public float currentStamina;
     public float staminaRegenRate;
@@ -34,8 +37,8 @@ public class ShapeMovement : MonoBehaviour
     private Rigidbody2D rb;
     private Collider2D col;
 
-    public Vector2 currentInputs;
-    public Vector2 lastInputs;
+    [HideInInspector] public Vector2 currentInputs;
+    [HideInInspector] public Vector2 lastInputs;
     private bool isGrounded;
     private bool canDash = true;
 
@@ -46,6 +49,7 @@ public class ShapeMovement : MonoBehaviour
     private Animator animator;
 
     public void SetMoveInputs(Vector2 input) => currentInputs = input;
+
 
     void Start()
     {
@@ -59,20 +63,21 @@ public class ShapeMovement : MonoBehaviour
     void Update()
     {
         CheckGrounded();
-        RegenStamina();
+        if (isPlayerControlled) RegenStamina();
     }
 
     void FixedUpdate()
     {
-        MovePlayer();
-        ChangeAnimationBools();
         if (currentInputs.x != 0)
         {
             lastInputs = currentInputs;
         }
+
+        Move();
+        UpdateAnimationBools();
     }
 
-    void ChangeAnimationBools()
+    void UpdateAnimationBools()
     {
         if (isGrounded)
         {
@@ -84,7 +89,7 @@ public class ShapeMovement : MonoBehaviour
         }
     }
 
-    void MovePlayer()
+    void Move()
     {
         float targetSpeed = currentInputs.x * moveSpeed;
         float appliedAccel = isGrounded ? acceleration : acceleration / 2f; // Halved acceleration if midair
@@ -94,12 +99,13 @@ public class ShapeMovement : MonoBehaviour
 
     public void Jump()
     {
-        if (isGrounded && currentStamina >= jumpCost)
-        {
-            SubtractStamina(jumpCost);
-            rb.linearVelocity = new Vector2(rb.linearVelocityX, jumpForce);
-            animator.SetBool("Jump", true);
-        }
+        if (!isGrounded) return;
+        if (isPlayerControlled && currentStamina < jumpCost) return;
+
+        if (isPlayerControlled) SubtractStamina(jumpCost);
+
+        rb.linearVelocity = new Vector2(rb.linearVelocityX, jumpForce);
+        animator.SetBool("Jump", true);
     }
 
 
@@ -113,16 +119,16 @@ public class ShapeMovement : MonoBehaviour
 
     public void Dash()
     {
-        if (canDash && currentStamina >= dashCost)
-        {
-            animator.SetBool("Dash", true);
-            canDash = false;
-            DashMove(dashForce);
+        if (!canDash) return;
+        if (isPlayerControlled && currentStamina < dashCost) return;
 
-            SubtractStamina(dashCost);
+        animator.SetBool("Dash", true);
+        canDash = false;
+        DashMove(dashForce);
 
-            Invoke(nameof(ResetDash), dashCooldown);
-        }
+        if (isPlayerControlled) SubtractStamina(dashCost);
+
+        Invoke(nameof(ResetDash), dashCooldown);
     }
 
     public void DashMove(float dashPower) // made this a seperate method because it will be called when attacking
@@ -156,9 +162,10 @@ public class ShapeMovement : MonoBehaviour
 
     public void SubtractStamina(float val)
     {
-        currentStamina -= val;
+        if (!isPlayerControlled) return;
+
         staminaRegenTimer = 0f;
-        currentStamina = Mathf.Max(currentStamina, 0f);
+        currentStamina = Mathf.Max(currentStamina -= val, 0f);
         UpdateStaminaBar();
     }
 
@@ -179,6 +186,16 @@ public class ShapeMovement : MonoBehaviour
                 UpdateStaminaBar();
             }
         }
+    }
+
+    void OnEnable()
+    {
+        if (isPlayerControlled) PlayerManager.Instance.RegisterActivePlayer(transform);
+    }
+
+    void OnDisable()
+    {
+        if (isPlayerControlled) PlayerManager.Instance.UnregisterActivePlayer();
     }
 
     // Uncomment if you want to visualize the ground check area
