@@ -57,6 +57,7 @@ public class ShapeMovement : MonoBehaviour
     public GameObject shapeSprite;
     public Slider staminaBar;
     public Slider manaBar;
+    public ParticleSystem jumpParticles;
 
     private Animator animator;
 
@@ -122,12 +123,14 @@ public class ShapeMovement : MonoBehaviour
         if (isPlayerControlled) SubtractStamina(jumpCost);
 
         rb.linearVelocity = new Vector2(rb.linearVelocityX, jumpForce);
+        
         animator.SetBool("Jump", true);
     }
 
 
     public void ReleaseJump()
     {
+        
         if (rb.linearVelocityY > 0f)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocityX, rb.linearVelocityY * jumpDecayMultiplier);
