@@ -44,15 +44,15 @@ public class Health : MonoBehaviour
 
     }
 
-    public void AddDamageMultiplier(float amount) => currentDamageMultiplier *= amount;
-    public void RemoveDamageMultiplier(float amount) => currentDamageMultiplier = Mathf.Max(currentDamageMultiplier / amount, 1f);
-    public void ResetDamageMultiplier() => currentDamageMultiplier = 1f;
-
     public void Heal(int amount)
     {
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
         UpdateHealthBar();
     }
+
+    public void AddDamageMultiplier(float amount) => currentDamageMultiplier *= amount;
+    public void RemoveDamageMultiplier(float amount) => currentDamageMultiplier = Mathf.Max(currentDamageMultiplier / amount, 1f);
+    public void ResetDamageMultiplier() => currentDamageMultiplier = 1f;
 
     private void Die()
     {

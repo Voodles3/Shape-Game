@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public abstract class ShapeAttack : MonoBehaviour
 {
@@ -24,6 +25,13 @@ public abstract class ShapeAttack : MonoBehaviour
     [SerializeField] private float specialAttackDuration;
     [SerializeField] private int specialAttackMoveSpeed;
 
+    [Header("Mana Settings")]
+    [SerializeField] private Slider manaBar;
+    [SerializeField] private float maxMana;
+    [SerializeField] private float currentMana;
+    [SerializeField] private float manaRegenRate;
+    [SerializeField] private float manaRegenDelay;
+
     // Protected fields (accessible by derived classes)
     protected Rigidbody2D Rb { get; private set; }
     protected Health Health { get; private set; }
@@ -34,7 +42,9 @@ public abstract class ShapeAttack : MonoBehaviour
     private bool isSpecialAttacking = false;
     private float baseDamage;
     private float normalGravity;
+    private float manaRegenTimer;
 
+    // I changed these string refs to static readonly StringToHash ints so that we won't have string reference issues
     private static readonly int AttackBoolAnim = Animator.StringToHash("attack");
     private static readonly int AttackDirectionAnim = Animator.StringToHash("attackDirection");
 
@@ -47,11 +57,10 @@ public abstract class ShapeAttack : MonoBehaviour
     public bool IsSpecialAttacking() => isSpecialAttacking;
 
     // SIMILARLY, LET'S FOLLOW THIS METHOD ORDER:
-    // 1. Unity Methods (Start, Update, FixedUpdate)
+    // 1. Unity Methods (Start, Update, FixedUpdate, etc.)
     // 2. Public methods
     // 3. Protected methods
     // 4. Private methods
-    // 5. Private internal methods
     // Put one-liners at the end of their respective section
     // AS I'VE DONE BELOW:
 
@@ -61,16 +70,25 @@ public abstract class ShapeAttack : MonoBehaviour
         movement = GetComponent<ShapeMovement>();
         Rb = GetComponent<Rigidbody2D>();
         Health = GetComponent<Health>();
+
+        currentMana = 0f;
         normalGravity = Rb.gravityScale;
         baseDamage = damage;
 
         ToggleHitbox(false);
+        UpdateManaBar();
+    }
+
+    protected virtual void Update()
+    {
+        RegenMana();
     }
 
     public virtual void Attack()
     {
-        if (!canAttack || isAttacking) return;
-        if (movement.currentStamina < movement.attackCost) return;
+        if (!canAttack
+        || isAttacking
+        || movement.CurrentStamina < movement.AttackCost) return;
 
         canAttack = false;
         isAttacking = true;
@@ -85,7 +103,7 @@ public abstract class ShapeAttack : MonoBehaviour
         animator.SetFloat(AttackDirectionAnim, attackDirection.x);
 
         movement.DashMove(attackDashForce);
-        movement.SubtractStamina(movement.attackCost);
+        movement.SubtractStamina(movement.AttackCost);
 
         Invoke(nameof(StopAttack), attackDuration);
         Invoke(nameof(ResetAttack), attackCooldown);
@@ -97,7 +115,7 @@ public abstract class ShapeAttack : MonoBehaviour
         ToggleHitbox(true);
         SetTempDamage(specialAttackDamage);
 
-        movement.ResetMana();
+        ResetMana();
         movement.SetTempMoveSpeed(specialAttackMoveSpeed);
 
         Invoke(nameof(StopSpecialAttack), specialAttackDuration);
@@ -111,7 +129,7 @@ public abstract class ShapeAttack : MonoBehaviour
         movement.ResetMoveSpeed();
     }
 
-    public bool CanSpecialAttack() => !isAttacking && movement.currentMana >= movement.maxMana;
+    public bool CanSpecialAttack() => !isAttacking && currentMana >= maxMana;
 
     public void ToggleMovement(bool canMove) => movement.canMove = canMove;
 
@@ -137,6 +155,35 @@ public abstract class ShapeAttack : MonoBehaviour
             attackHitbox.enabled = false;
         }
     }
+
+    #region Mana
+    private void ResetMana()
+    {
+
+        manaRegenTimer = 0f;
+        currentMana = 0f;
+        UpdateManaBar();
+    }
+
+    private void UpdateManaBar()
+    {
+        manaBar.value = currentMana / maxMana;
+    }
+
+    private void RegenMana()
+    {
+        if (currentMana < maxMana)
+        {
+            manaRegenTimer += Time.deltaTime;
+            if (manaRegenTimer >= manaRegenDelay)
+            {
+                currentMana += manaRegenRate * Time.deltaTime;
+                currentMana = Mathf.Min(currentMana, maxMana);
+                UpdateManaBar();
+            }
+        }
+    }
+    #endregion
 
     private void ResetAttack() => canAttack = true;
 

@@ -5,85 +5,69 @@ using UnityEngine.UI;
 public class ShapeMovement : MonoBehaviour
 {
     [Header("Control Settings")]
-    public bool isPlayerControlled = true;
+    [SerializeField] private bool isPlayerControlled = true;
 
     [Header("Movement Settings")]
-    public float moveSpeed = 5f;
-    public float jumpForce = 12f;
-
-    private float baseMoveSpeed;
-
+    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float jumpForce = 12f;
     [Tooltip("The value to multiply the player's Y velocity by when the player releases jump. Lower values = more control over jump height.")]
-    public float jumpDecayMultiplier = 0.5f;
-    public float dashForce = 15f;
-    public float dashCooldown = 1f;
-    public float acceleration = 20f;
+    [SerializeField] private float jumpDecayMultiplier = 0.5f;
+    [SerializeField] private float dashForce = 15f;
+    [SerializeField] private float dashCooldown = 1f;
+    [SerializeField] private float acceleration = 20f;
 
     [Header("Stamina Settings (Player Only)")]
-    public float maxStamina;
-    public float currentStamina;
-    public float staminaRegenRate;
-    public float staminaRegenDelay;
-
-    public float jumpCost;
-    public float dashCost;
-    public float attackCost;
-
-    private float staminaRegenTimer;
-
-    [Header("Mana Settings")]
-
-    public float maxMana;
-    public float currentMana;
-    public float manaRegenRate;
-    public float manaRegenDelay;
-
-    public float manaRegenTimer;
+    [SerializeField] private float maxStamina;
+    [SerializeField] private float currentStamina;
+    [SerializeField] private float staminaRegenRate;
+    [SerializeField] private float staminaRegenDelay;
+    [SerializeField] private float jumpCost;
+    [SerializeField] private float dashCost;
+    [SerializeField] private float attackCost;
 
     [Header("Ground Detection")]
     public Transform groundCheck;
     public float groundCheckRadius = 0.1f;
     public LayerMask groundLayer;
 
-    private Rigidbody2D rb;
-    private Collider2D col;
+    [Header("References")]
+    public Slider staminaBar;
+    public ParticleSystem jumpParticles;
 
     [HideInInspector] public Vector2 currentInputs;
     [HideInInspector] public Vector2 lastInputs;
-    private bool isGrounded;
-    private bool canDash = true;
     [HideInInspector] public bool canMove = true;
 
-    [Header("References")]
-    public GameObject shapeSprite;
-    public Slider staminaBar;
-    public Slider manaBar;
-    public ParticleSystem jumpParticles;
+    private float baseMoveSpeed;
+    private float staminaRegenTimer;
+    private bool isGrounded;
+    private bool canDash = true;
 
+    private Rigidbody2D rb;
+    private Collider2D col;
     private Animator animator;
 
+    // Public one-liner methods
     public void SetMoveInputs(Vector2 input) => currentInputs = input;
     public float CurrentMoveSpeed() => moveSpeed;
+    public float CurrentStamina => currentStamina;
+    public float AttackCost => attackCost;
 
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
-        animator = shapeSprite.GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
         currentStamina = maxStamina;
-        currentMana = 0f;
         lastInputs.x = 1;
         baseMoveSpeed = moveSpeed;
-
-        UpdateManaBar();
     }
 
     void Update()
     {
         CheckGrounded();
         if (isPlayerControlled) RegenStamina();
-        if (isPlayerControlled) RegenMana();
     }
 
     void FixedUpdate()
@@ -155,6 +139,15 @@ public class ShapeMovement : MonoBehaviour
         Invoke(nameof(ResetDash), dashCooldown);
     }
 
+    public void SubtractStamina(float val)
+    {
+        if (!isPlayerControlled) return;
+
+        staminaRegenTimer = 0f;
+        currentStamina = Mathf.Max(currentStamina -= val, 0f);
+        UpdateStaminaBar();
+    }
+
     public void DashMove(float dashPower) // made this a seperate method because it will be called when attacking
     {
         Vector2 dashDirection = new Vector2(currentInputs.x, 0).normalized;
@@ -164,9 +157,9 @@ public class ShapeMovement : MonoBehaviour
         rb.linearVelocity = new Vector2(rb.linearVelocityX + (dashDirection.x * dashPower), rb.linearVelocityY);
     }
 
-    void ResetDash() => canDash = true;
+    private void ResetDash() => canDash = true;
 
-    void CheckGrounded()
+    private void CheckGrounded()
     {
         if (groundCheck == null)
         {
@@ -184,36 +177,14 @@ public class ShapeMovement : MonoBehaviour
         isGrounded = Physics2D.OverlapArea(areaTopLeft, areaBottomRight, groundLayer);
     }
 
-    public void SubtractStamina(float val)
-    {
-        if (!isPlayerControlled) return;
 
-        staminaRegenTimer = 0f;
-        currentStamina = Mathf.Max(currentStamina -= val, 0f);
-        UpdateStaminaBar();
-    }
 
-    public void ResetMana()
-    {
-        if (!isPlayerControlled) return;
-
-        manaRegenTimer = 0f;
-        currentMana = 0f;
-        UpdateManaBar();
-    }
-
-    public void UpdateStaminaBar()
+    private void UpdateStaminaBar()
     {
         staminaBar.value = currentStamina / maxStamina;
     }
 
-    public void UpdateManaBar()
-    {
-        if (!isPlayerControlled) return;
-        manaBar.value = currentMana / maxMana;
-    }
-
-    void RegenStamina()
+    private void RegenStamina()
     {
         if (currentStamina < maxStamina)
         {
@@ -223,20 +194,6 @@ public class ShapeMovement : MonoBehaviour
                 currentStamina += staminaRegenRate * Time.deltaTime;
                 currentStamina = Mathf.Min(currentStamina, maxStamina);
                 UpdateStaminaBar();
-            }
-        }
-    }
-
-    void RegenMana()
-    {
-        if (currentMana < maxMana)
-        {
-            manaRegenTimer += Time.deltaTime;
-            if (manaRegenTimer >= manaRegenDelay)
-            {
-                currentMana += manaRegenRate * Time.deltaTime;
-                currentMana = Mathf.Min(currentMana, maxMana);
-                UpdateManaBar();
             }
         }
     }
