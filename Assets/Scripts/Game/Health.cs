@@ -4,34 +4,23 @@ using UnityEngine.UI;
 
 public class Health : MonoBehaviour
 {
+    [SerializeField] private ParticleSystem bloodSplash;
+    [SerializeField] private Slider healthBar;
     [SerializeField] private ShapeSettings shapeSettings;
+    [SerializeField] private UnityEvent OnDeath; // Yo I discovered Unity events are pretty useful, check out the inspector
+                                                 //WHAT THE FUCK ARE UNITY EVENTS
+    [SerializeField] private float currentHealth;
 
     private float maxHealth;
-    public bool isSquareSpecialAttacking = false;
-    public int specialAttackDamageMultiplier;
-    [SerializeField] private float currentHealth;
-    public ParticleSystem bloodSplash;
-
-    public UnityEvent OnDeath; // Yo I discovered Unity events are pretty useful, check out the inspector
-                               //WHAT THE FUCK ARE UNITY EVENTS
-
-
-    public Slider healthBar;
+    private float currentDamageMultiplier = 1f;
 
     public float MaxHealth => maxHealth;
     public float CurrentHealth => currentHealth;
 
+
     void Awake()
     {
-        if (shapeSettings != null)
-        {
-            maxHealth = shapeSettings.defaultHealth;
-        }
-        else
-        {
-            Debug.LogWarning($"No ShapeSettings assigned to {gameObject.name}. Using default value.");
-            maxHealth = 100f;
-        }
+        LoadSettings();
 
         currentHealth = maxHealth;
         UpdateHealthBar();
@@ -44,18 +33,20 @@ public class Health : MonoBehaviour
         healthBar.value = currentHealth / maxHealth;
     }
 
-    public void TakeDamage(int amount)
+    public void TakeDamage(float amount)
     {
-        if (isSquareSpecialAttacking)
-        {
-            amount = amount * specialAttackDamageMultiplier;
-        }
+        amount *= currentDamageMultiplier;
+
         currentHealth = Mathf.Max(currentHealth - amount, 0); // Don't let health go below 0
         UpdateHealthBar();
         bloodSplash.Play();
         if (currentHealth <= 0) Die();
 
     }
+
+    public void AddDamageMultiplier(float amount) => currentDamageMultiplier *= amount;
+    public void RemoveDamageMultiplier(float amount) => currentDamageMultiplier = Mathf.Max(currentDamageMultiplier / amount, 1f);
+    public void ResetDamageMultiplier() => currentDamageMultiplier = 1f;
 
     public void Heal(int amount)
     {
@@ -72,5 +63,17 @@ public class Health : MonoBehaviour
     {
         currentHealth = maxHealth;
         UpdateHealthBar();
+    }
+
+    private void LoadSettings()
+    {
+        if (shapeSettings == null)
+        {
+            Debug.LogWarning($"No ShapeSettings assigned to {gameObject.name}. Using a default value.");
+            maxHealth = 100f;
+            return;
+        }
+
+        maxHealth = shapeSettings.defaultMaxHealth;
     }
 }

@@ -1,29 +1,22 @@
 using System.Collections;
 using UnityEngine;
 
-public class SquareAttack : ShapeAttack // Inherits our abstract class
+public class SquareAttack : ShapeAttack
 {
-
-    public float moveSpeedDuringSpecialAttack;
-    public override void Attack()
-    {
-        base.Attack();
-    }
+    [Tooltip("Multiplier for square's attack damage while special attacking.")]
+    [SerializeField] private float specialAttackDamageMultiplier = 1.5f;
 
     public override void SpecialAttack()
     {
         if (!CanSpecialAttack()) return;
         base.SpecialAttack();
-        movement.moveSpeed = moveSpeedDuringSpecialAttack;
-        damage = specialAttackDamage;
-        health.isSquareSpecialAttacking = true;
+
+        Health.AddDamageMultiplier(specialAttackDamageMultiplier);
     }
 
     public override void StopSpecialAttack()
     {
         base.StopSpecialAttack();
-        movement.moveSpeed = movement.originalMoveSpeed;
-        damage = ogDamage;
-        health.isSquareSpecialAttacking = false;
+        Health.RemoveDamageMultiplier(specialAttackDamageMultiplier);
     }
 }

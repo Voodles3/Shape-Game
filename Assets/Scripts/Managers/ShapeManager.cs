@@ -25,12 +25,12 @@ public class ShapeManager : MonoBehaviour
 
     private void Update()
     {
-        if(SceneManager.GetActiveScene().buildIndex == 2 && !playerSpawned)
+        if (SceneManager.GetActiveScene().buildIndex == 2 && !playerSpawned)
         {
             Instantiate(activePlayer);
             playerSpawned = true;
         }
-        else if(SceneManager.GetActiveScene().buildIndex == 1)
+        else if (SceneManager.GetActiveScene().buildIndex == 1)
         {
             playerSpawned = false;
         }
@@ -38,16 +38,16 @@ public class ShapeManager : MonoBehaviour
 
     public void SetPlayer(string playerName)
     {
-        if(playerName == "circle")
+        if (playerName == "circle")
         {
             activePlayer = circlePlayer;
         }
-        else if(playerName == "square")
+        else if (playerName == "square")
         {
             activePlayer = squarePlayer;
 
         }
-        else if(playerName == "triangle")
+        else if (playerName == "triangle")
         {
             activePlayer = trianglePlayer;
         }

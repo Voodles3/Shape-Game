@@ -5179,9 +5179,9 @@ GameObject:
   - component: {fileID: 4287028833104166260}
   - component: {fileID: 761824849600518875}
   - component: {fileID: 6485272454972369542}
+  - component: {fileID: 6055161371882255912}
   - component: {fileID: 2076671547339100262}
   - component: {fileID: 1623948866183626715}
-  - component: {fileID: 6055161371882255912}
   m_Layer: 0
   m_Name: Square
   m_TagString: Untagged
@@ -5299,7 +5299,6 @@ MonoBehaviour:
   isPlayerControlled: 1
   moveSpeed: 7
   jumpForce: 15
-  originalMoveSpeed: 0
   jumpDecayMultiplier: 0.5
   dashForce: 50
   dashCooldown: 0
@@ -5307,10 +5306,10 @@ MonoBehaviour:
   maxStamina: 100
   currentStamina: 0
   staminaRegenRate: 40
-  staminaRegenDelay: 0
+  staminaRegenDelay: 1
   jumpCost: 20
   dashCost: 15
-  attackCost: 20
+  attackCost: 30
   maxMana: 100
   currentMana: 0
   manaRegenRate: 5
@@ -5328,6 +5327,27 @@ MonoBehaviour:
   staminaBar: {fileID: 6638661047331985127}
   manaBar: {fileID: 2623678341237608859}
   jumpParticles: {fileID: 8718279738800785836}
+--- !u!114 &6055161371882255912
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3727714373426777396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f44b4feba20a59a45a19cc5ff8bcc18a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackHitbox: {fileID: 829811223189112141}
+  attackCooldown: 0.2
+  attackDuration: 0.24
+  damage: 10
+  attackDashForce: 45
+  specialAttackDuration: 5
+  specialAttackDamage: 0
+  specialAttackMoveSpeed: 0
+  specialAttackDamageMultiplier: 1.5
 --- !u!114 &2076671547339100262
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5340,11 +5360,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 160f1f2ed64e1eb4fa296c83c730ad03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shapeSettings: {fileID: 11400000, guid: 20f35d60db569864488145d801295579, type: 2}
-  isSquareSpecialAttacking: 0
-  specialAttackDamageMultiplier: 0
-  currentHealth: 0
   bloodSplash: {fileID: 1284584508160197166}
+  healthBar: {fileID: 34256534602610332}
+  shapeSettings: {fileID: 11400000, guid: 20f35d60db569864488145d801295579, type: 2}
   OnDeath:
     m_PersistentCalls:
       m_Calls:
@@ -5372,7 +5390,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  healthBar: {fileID: 34256534602610332}
+  currentHealth: 0
 --- !u!114 &1623948866183626715
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5385,36 +5403,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df32d00b922399147ba965581cefa18c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &6055161371882255912
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3727714373426777396}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f44b4feba20a59a45a19cc5ff8bcc18a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shapeSprite: {fileID: 3823355242879674838}
-  attackHitbox: {fileID: 829811223189112141}
-  canAttack: 1
-  isAttacking: 0
-  isSpecialAttacking: 0
-  specialAttackEnabled: 0
-  attackCooldown: 0.2
-  attackDuration: 0.24
-  damage: 10
-  ogDamage: 0
-  attackDashForce: 45
-  specialAttackDuration: 5
-  specialAttackDamage: 0
-  rb: {fileID: 0}
-  movement: {fileID: 0}
-  health: {fileID: 0}
-  normalGravity: 0
-  moveSpeedDuringSpecialAttack: 3
 --- !u!1 &3823355242879674838
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,6 +7,6 @@ public class ShapeSettings : ScriptableObject
     public string shapeName;
 
     [Header("Health Settings")]
-    public float defaultHealth = 100f;
+    public float defaultMaxHealth = 100f;
 
 }

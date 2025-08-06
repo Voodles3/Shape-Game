@@ -11,7 +11,7 @@ public class ShapeMovement : MonoBehaviour
     public float moveSpeed = 5f;
     public float jumpForce = 12f;
 
-    public float originalMoveSpeed;
+    private float baseMoveSpeed;
 
     [Tooltip("The value to multiply the player's Y velocity by when the player releases jump. Lower values = more control over jump height.")]
     public float jumpDecayMultiplier = 0.5f;
@@ -63,6 +63,7 @@ public class ShapeMovement : MonoBehaviour
     private Animator animator;
 
     public void SetMoveInputs(Vector2 input) => currentInputs = input;
+    public float CurrentMoveSpeed() => moveSpeed;
 
 
     void Start()
@@ -73,7 +74,7 @@ public class ShapeMovement : MonoBehaviour
         currentStamina = maxStamina;
         currentMana = 0f;
         lastInputs.x = 1;
-        originalMoveSpeed = moveSpeed;
+        baseMoveSpeed = moveSpeed;
 
         UpdateManaBar();
     }
@@ -126,14 +127,14 @@ public class ShapeMovement : MonoBehaviour
         if (isPlayerControlled) SubtractStamina(jumpCost);
 
         rb.linearVelocity = new Vector2(rb.linearVelocityX, jumpForce);
-        
+
         animator.SetBool("Jump", true);
     }
 
 
     public void ReleaseJump()
     {
-        
+
         if (rb.linearVelocityY > 0f)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocityX, rb.linearVelocityY * jumpDecayMultiplier);
@@ -239,6 +240,9 @@ public class ShapeMovement : MonoBehaviour
             }
         }
     }
+
+    public void SetTempMoveSpeed(float speed) => moveSpeed = speed;
+    public void ResetMoveSpeed() => moveSpeed = baseMoveSpeed;
 
     void OnEnable()
     {

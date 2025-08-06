@@ -31,5 +31,5 @@ public class PlayerManager : MonoBehaviour
         ActivePlayerTransform = null;
     }
 
-    public bool IsPlayerAttacking => playerAttack != null && playerAttack.isAttacking;
+    public bool IsPlayerAttacking => playerAttack != null && playerAttack.IsAttacking();
 }

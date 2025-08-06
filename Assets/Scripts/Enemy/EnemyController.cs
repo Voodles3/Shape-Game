@@ -103,7 +103,7 @@ public class EnemyController : MonoBehaviour
         }
 
         // Respond to player getting too close (if not already attacking)
-        if (playerTooClose && !attack.isAttacking)
+        if (playerTooClose && !attack.IsAttacking())
         {
             float roll = Random.value;
             if (roll < closeResponse_AttackChance && attackTimer <= 0f)
@@ -171,7 +171,7 @@ public class EnemyController : MonoBehaviour
                 break;
 
             case EnemyState.Retreating:
-                if (!attack.isAttacking)
+                if (!attack.IsAttacking())
                 {
                     movement.SetMoveInputs(-direction);
                     if (attackTimer <= 0.1f)

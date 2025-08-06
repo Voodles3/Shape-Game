@@ -1,62 +1,91 @@
 using UnityEngine;
 
-// This class is inheritable by our shape-specific attack scripts, and makes them require an Attack() method
 public abstract class ShapeAttack : MonoBehaviour
 {
-    public GameObject shapeSprite;
-    public Collider2D attackHitbox;
+    // ZAZ LET'S FOLLOW THIS FIELD ORDER:
+    // 1. Public fields (let's avoid these though, use a property instead if needed)
+    // 2. Serialized private fields
+    // 3. Protected fields
+    // 4. Private fields
+    // 5. Private internal references
+    // 6. Public getter methods or properties (at the end, even if they're public)
+    // AS I'VE DONE BELOW:
 
-    [HideInInspector] public bool canAttack = true;
-    [HideInInspector] public bool isAttacking = false;
-    [HideInInspector] public bool isSpecialAttacking = false;
-    [HideInInspector] public bool specialAttackEnabled = false; // used by circle and triangle so it is in attacking mode yk
-    public float attackCooldown;
-    public float attackDuration;
-    public int damage;
-    [HideInInspector] public int ogDamage;
-    public float attackDashForce;
+    // Serialized private fields
+    [Header("Attack")]
+    [SerializeField] private Collider2D attackHitbox;
+    [SerializeField] private float damage;
+    [SerializeField] private float attackCooldown;
+    [SerializeField] private float attackDuration;
+    [SerializeField] private float attackDashForce;
 
-    public float specialAttackDuration;
-    public int specialAttackDamage;
+    [Header("Special Attack")]
+    [SerializeField] private int specialAttackDamage;
+    [SerializeField] private float specialAttackDuration;
+    [SerializeField] private int specialAttackMoveSpeed;
 
+    // Protected fields (accessible by derived classes)
+    protected Rigidbody2D Rb { get; private set; }
+    protected Health Health { get; private set; }
+
+    // Private fields
+    private bool canAttack = true;
+    private bool isAttacking = false;
+    private bool isSpecialAttacking = false;
+    private float baseDamage;
+    private float normalGravity;
+
+    private static readonly int AttackBoolAnim = Animator.StringToHash("attack");
+    private static readonly int AttackDirectionAnim = Animator.StringToHash("attackDirection");
+
+    // Internal references
     private Animator animator;
-    [HideInInspector] public Rigidbody2D rb;
-    [HideInInspector] public ShapeMovement movement;
-    [HideInInspector] public Health health;
-    [HideInInspector] public float normalGravity;
+    private ShapeMovement movement;
 
-    public void Start()
+    // Getter methods and properties
+    public bool IsAttacking() => isAttacking;
+    public bool IsSpecialAttacking() => isSpecialAttacking;
+
+    // SIMILARLY, LET'S FOLLOW THIS METHOD ORDER:
+    // 1. Unity Methods (Start, Update, FixedUpdate)
+    // 2. Public methods
+    // 3. Protected methods
+    // 4. Private methods
+    // 5. Private internal methods
+    // Put one-liners at the end of their respective section
+    // AS I'VE DONE BELOW:
+
+    protected virtual void Start()
     {
-        animator = shapeSprite.GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
         movement = GetComponent<ShapeMovement>();
-        rb = GetComponent<Rigidbody2D>();
-        health = GetComponent<Health>();
-        normalGravity = rb.gravityScale;
-        ogDamage = damage;
+        Rb = GetComponent<Rigidbody2D>();
+        Health = GetComponent<Health>();
+        normalGravity = Rb.gravityScale;
+        baseDamage = damage;
 
-        attackHitbox.enabled = false;
+        ToggleHitbox(false);
     }
 
     public virtual void Attack()
     {
-        if (!canAttack) return;
+        if (!canAttack || isAttacking) return;
         if (movement.currentStamina < movement.attackCost) return;
 
         canAttack = false;
         isAttacking = true;
-        animator.SetBool("attack", true);
+        animator.SetBool(AttackBoolAnim, true);
+        Rb.gravityScale = 0f;
+        ToggleHitbox(true);
 
         Vector2 attackDirection = movement.currentInputs.x != 0
             ? new Vector2(movement.currentInputs.x, 0)
             : new Vector2(movement.lastInputs.x, 0);
 
-        rb.gravityScale = 0f;
-        animator.SetFloat("attackDirection", attackDirection.x);
+        animator.SetFloat(AttackDirectionAnim, attackDirection.x);
+
         movement.DashMove(attackDashForce);
-
         movement.SubtractStamina(movement.attackCost);
-
-        attackHitbox.enabled = true;
 
         Invoke(nameof(StopAttack), attackDuration);
         Invoke(nameof(ResetAttack), attackCooldown);
@@ -65,23 +94,42 @@ public abstract class ShapeAttack : MonoBehaviour
     public virtual void SpecialAttack()
     {
         isSpecialAttacking = true;
-        attackHitbox.enabled = true;
+        ToggleHitbox(true);
+        SetTempDamage(specialAttackDamage);
+
         movement.ResetMana();
+        movement.SetTempMoveSpeed(specialAttackMoveSpeed);
 
         Invoke(nameof(StopSpecialAttack), specialAttackDuration);
-        
     }
 
-    public bool CanSpecialAttack()
+    public virtual void StopSpecialAttack()
     {
-        if (isAttacking) return false;
-        if (movement.currentMana < movement.maxMana) return false;
-        return true;
+        isSpecialAttacking = false;
+        ToggleHitbox(false);
+        ResetDamage();
+        movement.ResetMoveSpeed();
+    }
+
+    public bool CanSpecialAttack() => !isAttacking && movement.currentMana >= movement.maxMana;
+
+    public void ToggleMovement(bool canMove) => movement.canMove = canMove;
+
+    public void SetTempDamage(int value) => damage = value;
+    public void ResetDamage() => damage = baseDamage;
+
+    private void StopAttack()
+    {
+        animator.SetBool(AttackBoolAnim, false);
+        isAttacking = false;
+        Rb.gravityScale = normalGravity;
+
+        ToggleHitbox(false);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!isAttacking && !specialAttackEnabled) return;
+        if (!isAttacking && !isSpecialAttacking) return;
 
         if (other.TryGetComponent(out Health health) && other.gameObject != gameObject)
         {
@@ -90,21 +138,7 @@ public abstract class ShapeAttack : MonoBehaviour
         }
     }
 
-    void StopAttack()
-    {
-        animator.SetBool("attack", false);
-        isAttacking = false;
-        rb.gravityScale = normalGravity;
+    private void ResetAttack() => canAttack = true;
 
-        attackHitbox.enabled = false;
-    }
-
-    void ResetAttack() => canAttack = true;
-
-
-    public virtual void StopSpecialAttack()
-    {
-        isSpecialAttacking = false;
-        attackHitbox.enabled = false;
-    }
+    private void ToggleHitbox(bool enable) => attackHitbox.enabled = enable;
 }
