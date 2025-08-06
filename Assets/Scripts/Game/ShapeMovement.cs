@@ -17,6 +17,7 @@ public class ShapeMovement : MonoBehaviour
     [SerializeField] private float acceleration = 20f;
 
     [Header("Stamina Settings (Player Only)")]
+    [SerializeField] private Slider staminaBar;
     [SerializeField] private float maxStamina;
     [SerializeField] private float currentStamina;
     [SerializeField] private float staminaRegenRate;
@@ -26,16 +27,15 @@ public class ShapeMovement : MonoBehaviour
     [SerializeField] private float attackCost;
 
     [Header("Ground Detection")]
-    public Transform groundCheck;
-    public float groundCheckRadius = 0.1f;
-    public LayerMask groundLayer;
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private float groundCheckRadius = 0.1f;
+    [SerializeField] private LayerMask groundLayer;
 
-    [Header("References")]
-    public Slider staminaBar;
-    public ParticleSystem jumpParticles;
+    [Header("Other References")]
+    [SerializeField] private ParticleSystem jumpParticles;
 
-    [HideInInspector] public Vector2 currentInputs;
-    [HideInInspector] public Vector2 lastInputs;
+    private float currentInputs;
+    private float lastInputs;
     [HideInInspector] public bool canMove = true;
 
     private float baseMoveSpeed;
@@ -47,10 +47,10 @@ public class ShapeMovement : MonoBehaviour
     private Collider2D col;
     private Animator animator;
 
-    // Public one-liner methods
-    public void SetMoveInputs(Vector2 input) => currentInputs = input;
-    public float CurrentMoveSpeed() => moveSpeed;
+    public float CurrentMoveSpeed => moveSpeed;
     public float CurrentStamina => currentStamina;
+    public float CurrentInputs => currentInputs;
+    public float LastInputs => lastInputs;
     public float AttackCost => attackCost;
 
 
@@ -60,7 +60,7 @@ public class ShapeMovement : MonoBehaviour
         col = GetComponent<Collider2D>();
         animator = GetComponentInChildren<Animator>();
         currentStamina = maxStamina;
-        lastInputs.x = 1;
+        lastInputs = 1;
         baseMoveSpeed = moveSpeed;
     }
 
@@ -72,7 +72,7 @@ public class ShapeMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (currentInputs.x != 0)
+        if (currentInputs != 0)
         {
             lastInputs = currentInputs;
         }
@@ -97,7 +97,7 @@ public class ShapeMovement : MonoBehaviour
 
     void Move()
     {
-        float targetSpeed = currentInputs.x * moveSpeed;
+        float targetSpeed = currentInputs * moveSpeed;
         float appliedAccel = isGrounded ? acceleration : acceleration / 2f; // Halved acceleration if midair
         float newX = Mathf.Lerp(rb.linearVelocityX, targetSpeed, appliedAccel * Time.fixedDeltaTime);
         rb.linearVelocity = new Vector2(newX, rb.linearVelocityY); // Setting velocity directly instead of adding force, for controlled acceleration and fighting game style movement
@@ -150,12 +150,14 @@ public class ShapeMovement : MonoBehaviour
 
     public void DashMove(float dashPower) // made this a seperate method because it will be called when attacking
     {
-        Vector2 dashDirection = new Vector2(currentInputs.x, 0).normalized;
+        Vector2 dashDirection = new Vector2(currentInputs, 0).normalized;
         if (dashDirection == Vector2.zero)
-            dashDirection = new Vector2(lastInputs.x, 0).normalized; ; // Dash in direction player last moved
+            dashDirection = new Vector2(lastInputs, 0).normalized; ; // Dash in direction player last moved
 
         rb.linearVelocity = new Vector2(rb.linearVelocityX + (dashDirection.x * dashPower), rb.linearVelocityY);
     }
+
+    public void SetMoveInputs(float input) => currentInputs = input;
 
     private void ResetDash() => canDash = true;
 
@@ -201,12 +203,12 @@ public class ShapeMovement : MonoBehaviour
     public void SetTempMoveSpeed(float speed) => moveSpeed = speed;
     public void ResetMoveSpeed() => moveSpeed = baseMoveSpeed;
 
-    void OnEnable()
+    private void OnEnable()
     {
         if (isPlayerControlled) PlayerManager.Instance.RegisterActivePlayer(transform);
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
         if (isPlayerControlled) PlayerManager.Instance.UnregisterActivePlayer();
     }

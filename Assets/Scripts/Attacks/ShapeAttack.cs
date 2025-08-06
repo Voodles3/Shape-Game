@@ -96,9 +96,9 @@ public abstract class ShapeAttack : MonoBehaviour
         Rb.gravityScale = 0f;
         ToggleHitbox(true);
 
-        Vector2 attackDirection = movement.currentInputs.x != 0
-            ? new Vector2(movement.currentInputs.x, 0)
-            : new Vector2(movement.lastInputs.x, 0);
+        Vector2 attackDirection = movement.CurrentInputs != 0
+            ? new Vector2(movement.CurrentInputs, 0)
+            : new Vector2(movement.LastInputs, 0);
 
         animator.SetFloat(AttackDirectionAnim, attackDirection.x);
 

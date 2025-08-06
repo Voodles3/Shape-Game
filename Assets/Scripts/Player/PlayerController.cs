@@ -48,7 +48,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
+        float moveInput = inputActions.Player.Move.ReadValue<Vector2>().x;
         movement.SetMoveInputs(moveInput);
     }
 
