@@ -4,6 +4,9 @@ using UnityEngine.UI;
 
 public class ShapeMovement : MonoBehaviour
 {
+    [HideInInspector] public bool canMove = true; // This is the ONE field I've found so far that makes sense being public. 
+                                                  // It needs to be read here, is def movement related so it should live here, and needs to be set by other scripts.
+
     [Header("Control Settings")]
     [SerializeField] private bool isPlayerControlled = true;
 
@@ -36,17 +39,20 @@ public class ShapeMovement : MonoBehaviour
 
     private float currentInputs;
     private float lastInputs;
-    [HideInInspector] public bool canMove = true;
-
     private float baseMoveSpeed;
     private float staminaRegenTimer;
     private bool isGrounded;
     private bool canDash = true;
 
+    private static readonly int JumpAnimBool = Animator.StringToHash("Jump");
+    private static readonly int DashAnimBool = Animator.StringToHash("Dash");
+
     private Rigidbody2D rb;
     private Collider2D col;
     private Animator animator;
 
+    // None of these should be set outside of this class, so I made them get-only properties. This is the best way to do it instead of making the field public.
+    // This one-liner notation is basically shorthand for get; private set;
     public float CurrentMoveSpeed => moveSpeed;
     public float CurrentStamina => currentStamina;
     public float CurrentInputs => currentInputs;
@@ -54,53 +60,29 @@ public class ShapeMovement : MonoBehaviour
     public float AttackCost => attackCost;
 
 
-    void Start()
+    private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
         animator = GetComponentInChildren<Animator>();
+
         currentStamina = maxStamina;
         lastInputs = 1;
         baseMoveSpeed = moveSpeed;
     }
 
-    void Update()
+    private void Update()
     {
-        CheckGrounded();
+        if (currentInputs != 0) lastInputs = currentInputs;
         if (isPlayerControlled) RegenStamina();
+
+        CheckGrounded();
+        ResetAnimationBools();
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
-        if (currentInputs != 0)
-        {
-            lastInputs = currentInputs;
-        }
-        if (canMove)
-        {
-            Move();
-        }
-        UpdateAnimationBools();
-    }
-
-    void UpdateAnimationBools()
-    {
-        if (isGrounded)
-        {
-            animator.SetBool("Jump", false);
-        }
-        if (canDash)
-        {
-            animator.SetBool("Dash", false);
-        }
-    }
-
-    void Move()
-    {
-        float targetSpeed = currentInputs * moveSpeed;
-        float appliedAccel = isGrounded ? acceleration : acceleration / 2f; // Halved acceleration if midair
-        float newX = Mathf.Lerp(rb.linearVelocityX, targetSpeed, appliedAccel * Time.fixedDeltaTime);
-        rb.linearVelocity = new Vector2(newX, rb.linearVelocityY); // Setting velocity directly instead of adding force, for controlled acceleration and fighting game style movement
+        if (canMove) Move();
     }
 
     public void Jump()
@@ -112,9 +94,8 @@ public class ShapeMovement : MonoBehaviour
 
         rb.linearVelocity = new Vector2(rb.linearVelocityX, jumpForce);
 
-        animator.SetBool("Jump", true);
+        animator.SetBool(JumpAnimBool, true);
     }
-
 
     public void ReleaseJump()
     {
@@ -130,7 +111,7 @@ public class ShapeMovement : MonoBehaviour
         if (!canDash) return;
         if (isPlayerControlled && currentStamina < dashCost) return;
 
-        animator.SetBool("Dash", true);
+        animator.SetBool(DashAnimBool, true);
         canDash = false;
         DashMove(dashForce);
 
@@ -139,27 +120,36 @@ public class ShapeMovement : MonoBehaviour
         Invoke(nameof(ResetDash), dashCooldown);
     }
 
+    public void DashMove(float dashPower)
+    {
+        Vector2 dashDirection = new Vector2(currentInputs, 0).normalized;
+        if (dashDirection == Vector2.zero)
+            dashDirection = new Vector2(lastInputs, 0).normalized; // Dash in direction player last moved
+
+        rb.linearVelocity = new Vector2(rb.linearVelocityX + (dashDirection.x * dashPower), rb.linearVelocityY);
+    }
+
     public void SubtractStamina(float val)
     {
         if (!isPlayerControlled) return;
 
         staminaRegenTimer = 0f;
-        currentStamina = Mathf.Max(currentStamina -= val, 0f);
+        currentStamina = Mathf.Max(currentStamina - val, 0f);
         UpdateStaminaBar();
-    }
-
-    public void DashMove(float dashPower) // made this a seperate method because it will be called when attacking
-    {
-        Vector2 dashDirection = new Vector2(currentInputs, 0).normalized;
-        if (dashDirection == Vector2.zero)
-            dashDirection = new Vector2(lastInputs, 0).normalized; ; // Dash in direction player last moved
-
-        rb.linearVelocity = new Vector2(rb.linearVelocityX + (dashDirection.x * dashPower), rb.linearVelocityY);
     }
 
     public void SetMoveInputs(float input) => currentInputs = input;
 
-    private void ResetDash() => canDash = true;
+    public void SetTempMoveSpeed(float speed) => moveSpeed = speed;
+    public void ResetMoveSpeed() => moveSpeed = baseMoveSpeed;
+
+    private void Move()
+    {
+        float targetSpeed = currentInputs * moveSpeed;
+        float appliedAccel = isGrounded ? acceleration : acceleration / 2f; // Halved acceleration if midair
+        float newX = Mathf.Lerp(rb.linearVelocityX, targetSpeed, appliedAccel * Time.fixedDeltaTime);
+        rb.linearVelocity = new Vector2(newX, rb.linearVelocityY); // Setting velocity directly instead of adding force, for controlled acceleration and fighting game style movement
+    }
 
     private void CheckGrounded()
     {
@@ -179,13 +169,6 @@ public class ShapeMovement : MonoBehaviour
         isGrounded = Physics2D.OverlapArea(areaTopLeft, areaBottomRight, groundLayer);
     }
 
-
-
-    private void UpdateStaminaBar()
-    {
-        staminaBar.value = currentStamina / maxStamina;
-    }
-
     private void RegenStamina()
     {
         if (currentStamina < maxStamina)
@@ -200,8 +183,17 @@ public class ShapeMovement : MonoBehaviour
         }
     }
 
-    public void SetTempMoveSpeed(float speed) => moveSpeed = speed;
-    public void ResetMoveSpeed() => moveSpeed = baseMoveSpeed;
+    private void ResetAnimationBools()
+    {
+        if (isGrounded)
+        {
+            animator.SetBool(JumpAnimBool, false);
+        }
+        if (canDash)
+        {
+            animator.SetBool(DashAnimBool, false);
+        }
+    }
 
     private void OnEnable()
     {
@@ -212,6 +204,9 @@ public class ShapeMovement : MonoBehaviour
     {
         if (isPlayerControlled) PlayerManager.Instance.UnregisterActivePlayer();
     }
+
+    private void ResetDash() => canDash = true;
+    private void UpdateStaminaBar() => staminaBar.value = currentStamina / maxStamina;
 
     // Uncomment if you want to visualize the ground check area (nah im good)
     // void OnDrawGizmosSelected()
