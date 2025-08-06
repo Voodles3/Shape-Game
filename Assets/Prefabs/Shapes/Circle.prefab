@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 2041134673351005974}
   m_Layer: 0
   m_Name: Circle
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -119,14 +119,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a781c77b765a8d4fb1a97853007b150, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canMove: 1
   isPlayerControlled: 1
   moveSpeed: 7
   jumpForce: 15
-  originalMoveSpeed: 0
   jumpDecayMultiplier: 0.5
   dashForce: 50
   dashCooldown: 0
   acceleration: 40
+  staminaBar: {fileID: 3449795745363818928}
   maxStamina: 100
   currentStamina: 0
   staminaRegenRate: 40
@@ -134,22 +135,11 @@ MonoBehaviour:
   jumpCost: 20
   dashCost: 15
   attackCost: 30
-  maxMana: 100
-  currentMana: 0
-  manaRegenRate: 5
-  manaRegenDelay: 0
-  manaRegenTimer: 0
   groundCheck: {fileID: 7795726642654349182}
   groundCheckRadius: 0.1
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  currentInputs: {x: 0, y: 0}
-  lastInputs: {x: 0, y: 0}
-  canMove: 1
-  shapeSprite: {fileID: 7533133269189203410}
-  staminaBar: {fileID: 3449795745363818928}
-  manaBar: {fileID: 3408414489337221535}
   jumpParticles: {fileID: 4529746815569934653}
 --- !u!114 &4276124761651172411
 MonoBehaviour:
@@ -163,11 +153,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 160f1f2ed64e1eb4fa296c83c730ad03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shapeSettings: {fileID: 11400000, guid: 0b551861e41517440b5f33ed7eda059c, type: 2}
-  isSquareSpecialAttacking: 0
-  specialAttackDamageMultiplier: 0
-  currentHealth: 0
   bloodSplash: {fileID: 7987490986221004405}
+  healthBar: {fileID: 8389559265248977035}
+  shapeSettings: {fileID: 11400000, guid: 0b551861e41517440b5f33ed7eda059c, type: 2}
   OnDeath:
     m_PersistentCalls:
       m_Calls:
@@ -195,7 +183,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  healthBar: {fileID: 8389559265248977035}
+  currentHealth: 0
 --- !u!114 &424818366038363035
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -220,25 +208,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 141b0fe9431c31040b0144711af7e299, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shapeSprite: {fileID: 7533133269189203410}
   attackHitbox: {fileID: 894834628060466549}
-  canAttack: 1
-  isAttacking: 0
-  isSpecialAttacking: 0
-  specialAttackEnabled: 0
+  damage: 10
   attackCooldown: 0.2
   attackDuration: 0.24
-  damage: 10
-  ogDamage: 0
   attackDashForce: 20
-  specialAttackDuration: 3.5
   specialAttackDamage: 20
-  rb: {fileID: 0}
-  movement: {fileID: 0}
-  health: {fileID: 0}
-  normalGravity: 0
-  bounceMaterial: {fileID: 6200000, guid: d85b4c105bc18514880333c86b848c4b, type: 2}
+  specialAttackDuration: 3.5
+  specialAttackMoveSpeed: 0
+  manaBar: {fileID: 0}
+  maxMana: 0
+  currentMana: 0
+  manaRegenRate: 0
+  manaRegenDelay: 0
   bounceSpeed: 100
+  bounceMaterial: {fileID: 6200000, guid: d85b4c105bc18514880333c86b848c4b, type: 2}
 --- !u!1 &763060656746031819
 GameObject:
   m_ObjectHideFlags: 0

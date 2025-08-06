@@ -10434,13 +10434,13 @@ MonoBehaviour:
   attackRange: 1.8
   dashRange: 4
   jumpDistance: 2
-  attackCooldown: 0.3
+  attackCooldown: 0.5
   jumpCooldown: 1.5
-  dashCooldown: 0.01
+  dashCooldown: 1
   decisionInterval: 0.2
   idleChance: 0.5
-  dodgeChance: 1
-  closeResponse_AttackChance: 1
+  dodgeChance: 0.5
+  closeResponse_AttackChance: 0.5
   closeResponse_MoveAwayChance: 0.3
   closeResponse_DashAwayChance: 0.2
   dashInAttackChance: 0.4
@@ -10457,11 +10457,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 160f1f2ed64e1eb4fa296c83c730ad03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shapeSettings: {fileID: 11400000, guid: 20f35d60db569864488145d801295579, type: 2}
-  isSquareSpecialAttacking: 0
-  specialAttackDamageMultiplier: 0
-  currentHealth: 0
   bloodSplash: {fileID: 6821340598239729074}
+  healthBar: {fileID: 3628789328723801084}
+  shapeSettings: {fileID: 11400000, guid: 20f35d60db569864488145d801295579, type: 2}
   OnDeath:
     m_PersistentCalls:
       m_Calls:
@@ -10489,7 +10487,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  healthBar: {fileID: 3628789328723801084}
+  currentHealth: 0
 --- !u!114 &1243527899005872969
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10502,24 +10500,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f44b4feba20a59a45a19cc5ff8bcc18a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shapeSprite: {fileID: 7225168859636550297}
   attackHitbox: {fileID: 5426997216113384095}
-  canAttack: 1
-  isAttacking: 0
-  isSpecialAttacking: 0
-  specialAttackEnabled: 0
+  damage: 10
   attackCooldown: 0.2
   attackDuration: 0.24
-  damage: 10
-  ogDamage: 0
   attackDashForce: 45
-  specialAttackDuration: 0
   specialAttackDamage: 0
-  rb: {fileID: 0}
-  movement: {fileID: 0}
-  health: {fileID: 0}
-  normalGravity: 0
-  moveSpeedDuringSpecialAttack: 0
+  specialAttackDuration: 0
+  specialAttackMoveSpeed: 0
+  manaBar: {fileID: 0}
+  maxMana: 0
+  currentMana: 0
+  manaRegenRate: 0
+  manaRegenDelay: 0
+  specialAttackDamageMultiplier: 1.5
 --- !u!114 &8874446247877425027
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10532,14 +10526,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a781c77b765a8d4fb1a97853007b150, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isPlayerControlled: 0
+  canMove: 1
   moveSpeed: 7
   jumpForce: 15
-  originalMoveSpeed: 0
   jumpDecayMultiplier: 0.5
   dashForce: 50
   dashCooldown: 0
   acceleration: 40
+  staminaBar: {fileID: 0}
   maxStamina: 100
   currentStamina: 0
   staminaRegenRate: 40
@@ -10547,22 +10541,10 @@ MonoBehaviour:
   jumpCost: 20
   dashCost: 15
   attackCost: 20
-  maxMana: 0
-  currentMana: 0
-  manaRegenRate: 0
-  manaRegenDelay: 0
-  manaRegenTimer: 0
   groundCheck: {fileID: 6460592033202908131}
-  groundCheckRadius: 0.1
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  currentInputs: {x: 0, y: 0}
-  lastInputs: {x: 0, y: 0}
-  canMove: 1
-  shapeSprite: {fileID: 7225168859636550297}
-  staminaBar: {fileID: 0}
-  manaBar: {fileID: 0}
   jumpParticles: {fileID: 0}
 --- !u!1 &8774839748494753905
 GameObject:

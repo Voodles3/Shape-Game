@@ -36,7 +36,6 @@ public class EnemyController : MonoBehaviour
     {
         movement = GetComponent<ShapeMovement>();
         attack = GetComponent<ShapeAttack>();
-        playerTransform = PlayerManager.Instance.ActivePlayerTransform;
 
         decisionTimer = decisionInterval;
         currentState = Random.value < idleChance ? EnemyState.Idle : EnemyState.Aggressive;
@@ -44,7 +43,11 @@ public class EnemyController : MonoBehaviour
 
     void Update()
     {
-        if (playerTransform == null) return;
+        if (playerTransform == null)
+        {
+            playerTransform = PlayerManager.Instance.ActivePlayerTransform;
+            return;
+        }
 
         UpdateTimers();
 
@@ -91,14 +94,14 @@ public class EnemyController : MonoBehaviour
         bool playerInDashRange = absX > attackRange && absX <= dashRange;
         bool playerAbove = toPlayer.y > 1f;
 
-        Vector2 direction = new(Mathf.Sign(xDist), 0f);
+        float direction = Mathf.Sign(xDist);
 
         // Check player is attacking and in range
-        if (PlayerManager.Instance.IsPlayerAttacking &&
-            absX <= attackRange &&
-            Random.value < dodgeChance)
+        if (PlayerManager.Instance.IsPlayerAttacking
+        && absX <= attackRange
+        && Random.value < dodgeChance)
         {
-            TryDodge(xDist);
+            TryDodge(-direction);
             return;
         }
 
@@ -131,7 +134,7 @@ public class EnemyController : MonoBehaviour
         switch (currentState)
         {
             case EnemyState.Idle:
-                movement.SetMoveInputs(Vector2.zero);
+                movement.SetMoveInputs(0f);
                 if (Random.value > idleChance)
                     currentState = EnemyState.Aggressive;
                 break;
@@ -182,10 +185,9 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    void TryDodge(float xDist)
+    void TryDodge(float dashDirection)
     {
-        Vector2 away = new(-Mathf.Sign(xDist), 0f);
-        movement.SetMoveInputs(away);
+        movement.SetMoveInputs(dashDirection);
         if (dashTimer <= 0f)
         {
             movement.Dash();

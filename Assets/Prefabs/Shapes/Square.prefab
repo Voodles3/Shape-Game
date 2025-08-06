@@ -5184,7 +5184,7 @@ GameObject:
   - component: {fileID: 1623948866183626715}
   m_Layer: 0
   m_Name: Square
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5296,36 +5296,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a781c77b765a8d4fb1a97853007b150, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isPlayerControlled: 1
+  canMove: 1
   moveSpeed: 7
   jumpForce: 15
   jumpDecayMultiplier: 0.5
   dashForce: 50
   dashCooldown: 0
   acceleration: 40
+  staminaBar: {fileID: 6638661047331985127}
   maxStamina: 100
   currentStamina: 0
-  staminaRegenRate: 40
+  staminaRegenRate: 50
   staminaRegenDelay: 1
-  jumpCost: 20
+  jumpCost: 15
   dashCost: 15
-  attackCost: 30
-  maxMana: 100
-  currentMana: 0
-  manaRegenRate: 5
-  manaRegenDelay: 0
-  manaRegenTimer: 0
+  attackCost: 25
   groundCheck: {fileID: 2398162697666998010}
-  groundCheckRadius: 0.1
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  currentInputs: {x: 0, y: 0}
-  lastInputs: {x: 0, y: 0}
-  canMove: 1
-  shapeSprite: {fileID: 3823355242879674838}
-  staminaBar: {fileID: 6638661047331985127}
-  manaBar: {fileID: 2623678341237608859}
   jumpParticles: {fileID: 8718279738800785836}
 --- !u!114 &6055161371882255912
 MonoBehaviour:
@@ -5340,13 +5329,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackHitbox: {fileID: 829811223189112141}
+  damage: 10
   attackCooldown: 0.2
   attackDuration: 0.24
-  damage: 10
   attackDashForce: 45
+  specialAttackDamage: 20
   specialAttackDuration: 5
-  specialAttackDamage: 0
   specialAttackMoveSpeed: 0
+  manaBar: {fileID: 2623678341237608859}
+  maxMana: 100
+  manaRegenRate: 10
+  manaRegenDelay: 0
   specialAttackDamageMultiplier: 1.5
 --- !u!114 &2076671547339100262
 MonoBehaviour:

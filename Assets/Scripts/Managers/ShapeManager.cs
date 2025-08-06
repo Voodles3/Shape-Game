@@ -5,9 +5,9 @@ public class ShapeManager : MonoBehaviour
 {
     public static ShapeManager Instance { get; private set; }
 
-    public GameObject circlePlayer;
-    public GameObject squarePlayer;
-    public GameObject trianglePlayer;
+    [SerializeField] private GameObject circlePlayer;
+    [SerializeField] private GameObject squarePlayer;
+    [SerializeField] private GameObject trianglePlayer;
 
     public GameObject activePlayer;
     public bool playerSpawned = false;

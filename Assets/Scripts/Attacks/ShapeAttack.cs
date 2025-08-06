@@ -28,7 +28,6 @@ public abstract class ShapeAttack : MonoBehaviour
     [Header("Mana Settings")]
     [SerializeField] private Slider manaBar;
     [SerializeField] private float maxMana;
-    [SerializeField] private float currentMana;
     [SerializeField] private float manaRegenRate;
     [SerializeField] private float manaRegenDelay;
 
@@ -43,6 +42,8 @@ public abstract class ShapeAttack : MonoBehaviour
     private float baseDamage;
     private float normalGravity;
     private float manaRegenTimer;
+    private float currentMana;
+    private bool isPlayer;
 
     // I changed these string refs to static readonly StringToHash ints so that we won't have string reference issues
     private static readonly int AttackBoolAnim = Animator.StringToHash("attack");
@@ -74,6 +75,7 @@ public abstract class ShapeAttack : MonoBehaviour
         currentMana = 0f;
         normalGravity = Rb.gravityScale;
         baseDamage = damage;
+        isPlayer = CompareTag("Player");
 
         ToggleHitbox(false);
         UpdateManaBar();
@@ -81,7 +83,7 @@ public abstract class ShapeAttack : MonoBehaviour
 
     protected virtual void Update()
     {
-        RegenMana();
+        if (isPlayer) RegenMana();
     }
 
     public virtual void Attack()
@@ -157,31 +159,31 @@ public abstract class ShapeAttack : MonoBehaviour
     }
 
     #region Mana
-    private void ResetMana()
-    {
-
-        manaRegenTimer = 0f;
-        currentMana = 0f;
-        UpdateManaBar();
-    }
-
     private void UpdateManaBar()
     {
+        if (!isPlayer || manaBar == null) return;
         manaBar.value = currentMana / maxMana;
     }
 
     private void RegenMana()
     {
-        if (currentMana < maxMana)
+        if (!isPlayer || currentMana >= maxMana) return;
+
+        manaRegenTimer += Time.deltaTime;
+        if (manaRegenTimer >= manaRegenDelay)
         {
-            manaRegenTimer += Time.deltaTime;
-            if (manaRegenTimer >= manaRegenDelay)
-            {
-                currentMana += manaRegenRate * Time.deltaTime;
-                currentMana = Mathf.Min(currentMana, maxMana);
-                UpdateManaBar();
-            }
+            currentMana += manaRegenRate * Time.deltaTime;
+            currentMana = Mathf.Min(currentMana, maxMana);
+            UpdateManaBar();
         }
+    }
+
+    private void ResetMana()
+    {
+        if (!isPlayer) return;
+        manaRegenTimer = 0f;
+        currentMana = 0f;
+        UpdateManaBar();
     }
     #endregion
 

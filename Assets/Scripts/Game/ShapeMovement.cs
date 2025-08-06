@@ -7,9 +7,6 @@ public class ShapeMovement : MonoBehaviour
     [HideInInspector] public bool canMove = true; // This is the ONE field I've found so far that makes sense being public. 
                                                   // It needs to be read here, is def movement related so it should live here, and needs to be set by other scripts.
 
-    [Header("Control Settings")]
-    [SerializeField] private bool isPlayerControlled = true;
-
     [Header("Movement Settings")]
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float jumpForce = 12f;
@@ -31,7 +28,6 @@ public class ShapeMovement : MonoBehaviour
 
     [Header("Ground Detection")]
     [SerializeField] private Transform groundCheck;
-    [SerializeField] private float groundCheckRadius = 0.1f;
     [SerializeField] private LayerMask groundLayer;
 
     [Header("Other References")]
@@ -43,6 +39,7 @@ public class ShapeMovement : MonoBehaviour
     private float staminaRegenTimer;
     private bool isGrounded;
     private bool canDash = true;
+    private bool isPlayer;
 
     private static readonly int JumpAnimBool = Animator.StringToHash("Jump");
     private static readonly int DashAnimBool = Animator.StringToHash("Dash");
@@ -74,7 +71,7 @@ public class ShapeMovement : MonoBehaviour
     private void Update()
     {
         if (currentInputs != 0) lastInputs = currentInputs;
-        if (isPlayerControlled) RegenStamina();
+        if (isPlayer) RegenStamina();
 
         CheckGrounded();
         ResetAnimationBools();
@@ -88,9 +85,9 @@ public class ShapeMovement : MonoBehaviour
     public void Jump()
     {
         if (!isGrounded) return;
-        if (isPlayerControlled && currentStamina < jumpCost) return;
+        if (isPlayer && currentStamina < jumpCost) return;
 
-        if (isPlayerControlled) SubtractStamina(jumpCost);
+        if (isPlayer) SubtractStamina(jumpCost);
 
         rb.linearVelocity = new Vector2(rb.linearVelocityX, jumpForce);
 
@@ -109,13 +106,13 @@ public class ShapeMovement : MonoBehaviour
     public void Dash()
     {
         if (!canDash) return;
-        if (isPlayerControlled && currentStamina < dashCost) return;
+        if (isPlayer && currentStamina < dashCost) return;
 
         animator.SetBool(DashAnimBool, true);
         canDash = false;
         DashMove(dashForce);
 
-        if (isPlayerControlled) SubtractStamina(dashCost);
+        if (isPlayer) SubtractStamina(dashCost);
 
         Invoke(nameof(ResetDash), dashCooldown);
     }
@@ -131,7 +128,7 @@ public class ShapeMovement : MonoBehaviour
 
     public void SubtractStamina(float val)
     {
-        if (!isPlayerControlled) return;
+        if (!isPlayer) return;
 
         staminaRegenTimer = 0f;
         currentStamina = Mathf.Max(currentStamina - val, 0f);
@@ -197,12 +194,13 @@ public class ShapeMovement : MonoBehaviour
 
     private void OnEnable()
     {
-        if (isPlayerControlled) PlayerManager.Instance.RegisterActivePlayer(transform);
+        isPlayer = CompareTag("Player");
+        if (isPlayer) PlayerManager.Instance.RegisterActivePlayer(transform);
     }
 
     private void OnDisable()
     {
-        if (isPlayerControlled) PlayerManager.Instance.UnregisterActivePlayer();
+        if (isPlayer) PlayerManager.Instance.UnregisterActivePlayer();
     }
 
     private void ResetDash() => canDash = true;
