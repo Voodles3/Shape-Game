@@ -57,6 +57,11 @@ public class Health : MonoBehaviour
     private void Die()
     {
         OnDeath?.Invoke();
+        if (GetComponent<ShapeMovement>().IsPlayer)
+        {
+            UIManager.Instance.DieCanvas();
+        }
+
     }
 
     public void Revive()

@@ -10320,7 +10320,7 @@ GameObject:
   - component: {fileID: 8874446247877425027}
   m_Layer: 0
   m_Name: Enemy Square
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -10510,7 +10510,6 @@ MonoBehaviour:
   specialAttackMoveSpeed: 0
   manaBar: {fileID: 0}
   maxMana: 0
-  currentMana: 0
   manaRegenRate: 0
   manaRegenDelay: 0
   specialAttackDamageMultiplier: 1.5

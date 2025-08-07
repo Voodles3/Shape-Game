@@ -57,6 +57,10 @@ public abstract class ShapeAttack : MonoBehaviour
     public bool IsAttacking() => isAttacking;
     public bool IsSpecialAttacking() => isSpecialAttacking;
 
+    public bool IsPlayer() => isPlayer;
+
+    public float NormalGravity() => normalGravity;
+
     // SIMILARLY, LET'S FOLLOW THIS METHOD ORDER:
     // 1. Unity Methods (Start, Update, FixedUpdate, etc.)
     // 2. Public methods

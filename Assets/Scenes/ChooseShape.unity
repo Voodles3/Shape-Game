@@ -631,7 +631,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   circlePlayer: {fileID: 478210816567703586, guid: bb135e85436f4904ba95cca0e9de268f, type: 3}
   squarePlayer: {fileID: 3727714373426777396, guid: 18245a4c89efd4042934b215b96fc464, type: 3}
-  trianglePlayer: {fileID: 5162083061840376650, guid: 52d50e70e78d5f64ab6dad17ad19a336, type: 3}
+  trianglePlayer: {fileID: 7707981093400834551, guid: 52d50e70e78d5f64ab6dad17ad19a336, type: 3}
   activePlayer: {fileID: 0}
   playerSpawned: 0
 --- !u!4 &453914499
