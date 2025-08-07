@@ -28,26 +28,17 @@ public class TriangleAttack : ShapeAttack
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (enemy != null)
-            if (collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag(enemy.gameObject.tag))
-                StopSpecialAttack();
-    }
-
     public override void SpecialAttack()
     {
         if (!CanSpecialAttack()) return;
         base.SpecialAttack();
-        if (base.IsPlayer())
+        if (IsPlayer() && enemy == null)
         {
-            if (enemy == null)
-                enemy = GameObject.FindWithTag("Enemy");
+            enemy = GameObject.FindWithTag("Enemy");
         }
         else
         {
-            if (enemy == null)
-                enemy = GameObject.FindWithTag("Player");
+            enemy = GameObject.FindWithTag("Player");
         }
         ToggleMovement(false);
         Health.AddDamageMultiplier(specialAttackDamageResistance);
@@ -57,7 +48,7 @@ public class TriangleAttack : ShapeAttack
         Invoke(nameof(StopAiming), aimingTime);
     }
 
-    public override void StopSpecialAttack()
+    protected override void StopSpecialAttack()
     {
         base.StopSpecialAttack();
         ToggleMovement(true);
@@ -80,12 +71,19 @@ public class TriangleAttack : ShapeAttack
 
     private void Shoot()
     {
-        transform.Translate(shootDirection * shootSpeed * Time.deltaTime, Space.World);
+        transform.Translate(shootSpeed * Time.deltaTime * shootDirection, Space.World); // Bro is a NErd
     }
 
     private void StopAiming()
     {
         isAiming = false;
         shootDirection = (targetPos - transform.position).normalized;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        OnAttackContact(other);
+        if (enemy != null && !isAiming)
+            StopSpecialAttack();
     }
 }

@@ -16,7 +16,7 @@ public class SquareAttack : ShapeAttack
         Health.AddDamageMultiplier(specialAttackDamageResistance);
     }
 
-    public override void StopSpecialAttack()
+    protected override void StopSpecialAttack()
     {
         base.StopSpecialAttack();
         Health.RemoveDamageMultiplier(specialAttackDamageMultiplier);

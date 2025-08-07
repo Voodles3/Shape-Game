@@ -127,7 +127,7 @@ public abstract class ShapeAttack : MonoBehaviour
         Invoke(nameof(StopSpecialAttack), specialAttackDuration);
     }
 
-    public virtual void StopSpecialAttack()
+    protected virtual void StopSpecialAttack()
     {
         isSpecialAttacking = false;
         ToggleHitbox(false);
@@ -135,12 +135,23 @@ public abstract class ShapeAttack : MonoBehaviour
         movement.ResetMoveSpeed();
     }
 
-    public bool CanSpecialAttack() => !isAttacking && currentMana >= maxMana;
+    protected bool CanSpecialAttack() => !isAttacking && currentMana >= maxMana;
 
-    public void ToggleMovement(bool canMove) => movement.canMove = canMove;
+    protected void ToggleMovement(bool canMove) => movement.canMove = canMove;
 
-    public void SetTempDamage(int value) => damage = value;
-    public void ResetDamage() => damage = baseDamage;
+    protected void SetTempDamage(int value) => damage = value;
+    protected void ResetDamage() => damage = baseDamage;
+
+    protected void OnAttackContact(Collider2D other)
+    {
+        if (!isAttacking && !isSpecialAttacking) return;
+
+        if (other.TryGetComponent(out Health otherHealth) && other.gameObject != gameObject)
+        {
+            otherHealth.TakeDamage(damage);
+            attackHitbox.enabled = false;
+        }
+    }
 
     private void StopAttack()
     {
@@ -151,16 +162,6 @@ public abstract class ShapeAttack : MonoBehaviour
         ToggleHitbox(false);
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (!isAttacking && !isSpecialAttacking) return;
-
-        if (other.TryGetComponent(out Health health) && other.gameObject != gameObject)
-        {
-            health.TakeDamage(damage);
-            attackHitbox.enabled = false;
-        }
-    }
 
     #region Mana
     private void UpdateManaBar()

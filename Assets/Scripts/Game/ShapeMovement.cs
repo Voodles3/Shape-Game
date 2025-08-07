@@ -55,7 +55,6 @@ public class ShapeMovement : MonoBehaviour
     public float CurrentInputs => currentInputs;
     public float LastInputs => lastInputs;
     public float AttackCost => attackCost;
-
     public bool IsPlayer => isPlayer;
 
 

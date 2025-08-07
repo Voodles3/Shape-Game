@@ -17,7 +17,7 @@ public class CircleAttack : ShapeAttack
         StartBouncing();
     }
 
-    public override void StopSpecialAttack()
+    protected override void StopSpecialAttack()
     {
         base.StopSpecialAttack();
         ToggleMovement(true);
